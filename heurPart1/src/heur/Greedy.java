@@ -1,14 +1,24 @@
 package heur;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class Greedy {
 	
-	private int[][] distM;
+	private final static Logger log = Logger.getLogger(Greedy.class.getName());
+	static  {
+		Util.setupLogger(log, /*on=*/true);
+	}
 	
-	public Greedy(int[][] distM) {
-		this.distM = distM;
+	private Problem problem;
+
+	public Greedy(Problem problem) {
+		this.problem = problem;
 	}
 	
 	/**
@@ -16,7 +26,7 @@ public class Greedy {
 	 * @return a solution
 	 */
 	public Solution execute() {
-		Solution solution = new Solution(getN());
+		Solution solution = new Solution( problem.getCitiesNum() );
 		
 		HashSet<Integer> _cities = new HashSet<Integer>();
 		for (int i=0; i<solution.getCitiesNum(); ++i) {
@@ -32,28 +42,51 @@ public class Greedy {
 				int cur = Util.choose(curCities);
 				System.err.println("choose: " + cur);
 				
-				// TODO: max consecutive home/abroad parameter
 				
-				// greedy
-				Solution.Game game = solution.getFirstPossibleGame(cur, round);
+				// get all games
+				List<Solution.Game> games = solution.getPossibleGames(cur, round, problem.consecHome, problem.consecRoad);
+				System.err.println("found "+games.size()+" opponents");
 				
-				if (game == null) { 
+				if (games.isEmpty()) {
 					System.err.println("Can't find an opponent for " + cur  + " in " + round +". Giving up.");
 					return solution;
 				}
 				
-				int other = game.getOther(cur);
+				// greedy: get closest city
+				Solution.Game chosenGame = null;
+				
+				int curMin = Integer.MAX_VALUE;
+				for (Solution.Game game : games) {
+					int travelDistance = 0;
+					int gameLocation = game.getLocation();
+					log.info("check game: " +game);
+					for (int player : game.getPlayers()) {
+						// assume players start at home
+						int lastLoc = (round == 0) ? player : solution.getLocationOfGame(player, round-1);
+						travelDistance += problem.getDistance(lastLoc, gameLocation);
+						if (lastLoc == gameLocation) {
+							log.info("player "+player+" can stay");
+						} else {
+							log.info("player "+player+" would have to move from "+lastLoc+ " to "+gameLocation+", which costs: "+ problem.getDistance(lastLoc, gameLocation));
+						}
+					}
+					
+					// minimum
+					if (travelDistance < curMin) {
+						curMin = travelDistance;
+						chosenGame = game;
+						log.info("Found cheaper game: "+game +"; cost: " + travelDistance);
+					}
+				}
+				
+				int other = chosenGame.getOther(cur);
 				curCities.remove(Integer.valueOf(other));
 				
-				solution.addGame(game, round);
+				solution.addGame(chosenGame, round);
 			}
 		}
 		
 		return solution;
-	}
-	
-	private int getN() {
-		return distM.length;
 	}
 	
 
