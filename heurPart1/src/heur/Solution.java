@@ -263,9 +263,22 @@ public class Solution {
 		solution.get(round).add(game);
 	}
 	
+	public void dropRound(int round) {
+		solution.get(round).clear();
+	}
+	
 	public int getLocationOfGame(int city, int round) {
 		return getGameOfCityInRound(city, round).getLocation();
 	}
 	
+	public int getCurrentRound() { // i.e. last round that has at least one game
+		for (int i=0; i<solution.size(); i++) {
+			if (solution.get(i).isEmpty()) {
+				return i > 0 ? i - 1 : 0;
+			}
+		}
+		return solution.size(); // already full
+		
+	}
 
 }
