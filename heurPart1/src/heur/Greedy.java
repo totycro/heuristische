@@ -28,7 +28,7 @@ public class Greedy {
 	 */
 	public Solution execute() {
 		// Set this seed here to the value you get from the last run of the test case
-		return execute(30);
+		return execute(0);
 	}
 	public Solution execute(long seed) {
 		Random rand = new Random(seed);
