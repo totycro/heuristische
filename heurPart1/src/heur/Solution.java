@@ -206,17 +206,20 @@ public class Solution {
 			}
 		}
 
-		// check consecutive constraints
+		// check constraints
 		boolean canPlayHome = canPlayAt(city, round, true, consecHome, conseqRoad);
 		boolean canPlayAbroad = canPlayAt(city, round, false, consecHome, conseqRoad);
 
 		// select an unused, current free team
 		for (int candidate : candidates) {
+			if ( round > 0 && getGameOfCityInRound(city, round-1).contains(candidate)) { // repeat constraint
+				continue;
+			}
 			if (!usedHome.contains(candidate)) {
 				// play at home against candidate
+				 // NOTE: this is not optimal here, we could have cut a lot of games if we did it earlier
 				if (canPlayHome && canPlayAt(candidate, round, false, consecHome, conseqRoad)) {
-					// NOTE: this is not optimal here, we could have cut a lot of games if we did it earlier
-					possibleGames.add(new Game(city, candidate, /* atCity= */true));
+						possibleGames.add(new Game(city, candidate, /* atCity= */true));
 				}
 			}
 
@@ -231,7 +234,7 @@ public class Solution {
 	}
 
 	/**
-	 * Check consecutive games restrictions 
+	 * Check consecutive games and repeaters restrictions 
 	 * @param home: whether to check for home
 	 */
 	private boolean canPlayAt(int city, int round, boolean home, int consecHome, int conseqRoad) {

@@ -13,7 +13,7 @@ public class Greedy {
 	
 	private final static Logger log = Logger.getLogger(Greedy.class.getName());
 	static  {
-		Util.setupLogger(log, /*on=*/true);
+		Util.setupLogger(log, /*on=*/false);
 	}
 	
 	private Problem problem;
