@@ -21,6 +21,5 @@ public class Problem {
 	public int getDistance(int a, int b) {
 		return distM[a][b];
 	}
-	
 
 }

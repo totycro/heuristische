@@ -280,5 +280,28 @@ public class Solution {
 		return solution.size(); // already full
 		
 	}
+	
+	public int getCumulativeCost(Problem problem) {
+		int cost = 0;
+			
+		for (int round=0; round<getCurrentRound(); ++round) {
+			/*
+			if (round == 1) {
+				System.err.println("first round cost: "+ cost);
+			}
+			*/
+			for (int player=0; player<getCitiesNum(); player++) {
+				int lastLoc = (round == 0) ? player : getLocationOfGame(player, round-1);
+				int gameLocation = getLocationOfGame(player, round);
+				cost += problem.getDistance(lastLoc, gameLocation);
+			}
+		}
+		// back home
+		for (int player=0; player<getCitiesNum(); player++) {
+			int gameLocation = getLocationOfGame(player, getCurrentRound()-1);
+			cost += problem.getDistance(gameLocation, player);
+		}
+		return cost;
+	}
 
 }

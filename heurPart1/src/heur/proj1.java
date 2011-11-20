@@ -1,5 +1,10 @@
 package heur;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 
 public class proj1 {
 
@@ -26,7 +31,7 @@ public class proj1 {
 		int[][] distM = txf.getDist();
 		int n = txf.getN();
 		System.err.println("read distances: ");
-		printMatrix(distM);
+		printMatrix(distM, new PrintWriter(System.out));
 		
 		int consec_home = Integer.parseInt(args[2]);
 		int consec_road = Integer.parseInt(args[3]);
@@ -39,11 +44,26 @@ public class proj1 {
 		
 		if (!sol.isComplete()) {
 			System.err.println("\ngreedy failed, part of solution: \n"+sol);
+			try {
+				new PrintWriter( new FileWriter("solution.txt") ).println(sol.toString());
+			} catch (IOException e) {
+				e.printStackTrace(); 
+			}
 			System.exit(1);
 		}
 		
 		if (args[1].equals("-g")) {
+			try {
+				PrintWriter p = new PrintWriter( new FileWriter("solution.txt") );
+				p.println(sol.toString());
+				p.flush();
+				p.close();
+			} catch (IOException e) {
+				e.printStackTrace(); 
+			}
 			System.err.println("\ngreedy solution: \n"+sol);
+			
+			System.err.println("all costs: " +  sol.getCumulativeCost(problem) );
 		} else if (args[1].equals("-n1")) {
 			// TODO: first neighborhood
 			System.err.println("\nn1 TODO");
@@ -57,14 +77,14 @@ public class proj1 {
 	}
 	
 	
-	static private void printMatrix(int [][] M) {
+	static private void printMatrix(int [][] M, PrintWriter out) {
 		for (int i=0; i<M.length; ++i) {
 			for (int j=0; j<M[0].length; ++j) {
-				System.err.format("%6d", M[i][j]);
+				out.format("%6d", M[i][j]);
 			}
-			System.err.println("");
-			
+			out.println();
 		}
+		out.flush();
 	}
 
 }
