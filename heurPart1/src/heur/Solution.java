@@ -1,7 +1,6 @@
 package heur;
 
 import java.util.*;
-import java.lang.*;
 
 /**
  * Simple interface to a solution
@@ -67,19 +66,40 @@ public class Solution {
 		public String toString() {
 			return "Game(" + a + "," + b + "," + playAtA + ")";
 		}
+		
+		public boolean comparePlayers(int aOther, int bOther){
+			return ((aOther==this.a)&&(bOther==this.b)) || ((aOther==this.b)&&(bOther==this.a));
+		}
 	}
 
 	private List<List<Game>> solution;
 	private int n;
-
-	public Solution(int n) {
+	private Problem problem;
+	int consecHome;
+	int conseqRoad;
+	
+	public Solution(int n, Problem problem) {
 		this.n = n;
 		solution = new ArrayList<List<Game>>();
 		for (int i = 0; i < getRoundsNum(); i++) {
 			solution.add(new ArrayList<Game>());
 		}
+		this.problem = problem;
 	}
-
+	
+	public Solution(Solution sol){
+		this.solution = sol.getSolution();
+		this.n = sol.n;
+	}
+	
+	public List<List<Game>> getSolution(){
+		return solution;
+	}
+	
+	public void setSolution(List<List<Game>> settingSol){
+		this.solution=settingSol;
+	}
+	
 	public void setDebugData() {
 		for (int i = 0; i < getRoundsNum(); i++) {
 			for (int j = 0; j < getGamesNum(); j++) {
@@ -167,6 +187,7 @@ public class Solution {
 		return s;
 	}
 
+	
 	private String getCityName(int i) {
 
 		// TODO: city names:
@@ -180,6 +201,8 @@ public class Solution {
 	 */
 	public List<Game> getPossibleGames(int city, int round, int consecHome,
 			int conseqRoad) {
+		this.consecHome = consecHome;
+		this.conseqRoad = conseqRoad;
 		List<Game> possibleGames = new ArrayList<Game>();
 		Set<Integer> usedHome = new HashSet<Integer>();
 		Set<Integer> usedAbroad = new HashSet<Integer>();
@@ -194,6 +217,7 @@ public class Solution {
 				usedAbroad.add(game.getOther(city));
 			}
 		}
+		
 		Set<Integer> candidates = new HashSet<Integer>();
 		for (int i = 0; i < getCitiesNum(); i++) {
 			candidates.add(i);
@@ -237,7 +261,7 @@ public class Solution {
 	 * Check consecutive games and repeaters restrictions 
 	 * @param home: whether to check for home
 	 */
-	private boolean canPlayAt(int city, int round, boolean home, int consecHome, int conseqRoad) {
+	public boolean canPlayAt(int city, int round, boolean home, int consecHome, int conseqRoad) {
 		int roundBeforeLast = round - 1;
 		// check relevant games
 		// consecHome = 3  => if last 3 games were at home, we can't play at home any more
@@ -284,7 +308,7 @@ public class Solution {
 		
 	}
 	
-	public int getCumulativeCost(Problem problem) {
+	public int getCumulativeCost() {
 		int cost = 0;
 			
 		for (int round=0; round<getCurrentRound(); ++round) {
@@ -306,5 +330,101 @@ public class Solution {
 		}
 		return cost;
 	}
-
+	
+	public int getSingeleCumulativeCost(int round, int otherRound) {
+		int cost = 0;
+		for (int player=0; player<getCitiesNum(); player++) {
+			//
+			int lastLoc = getLocationOfGame(player, otherRound);
+			int gameLocation = getLocationOfGame(player, round);
+			//
+			cost += problem.getDistance(lastLoc, gameLocation);
+		}
+		return cost;
+	}
+	/*
+	public int getSingeleCumulativeCost(Problem problem, int round, int otherRound, int city) {
+		int lastLoc = getLocationOfGame(city, otherRound);
+		int gameLocation = getLocationOfGame(city, round);
+		return problem.getDistance(lastLoc, gameLocation);
+	}
+	*/
+	
+	public List<List<Game>> deepCopy(){
+		List<List<Game>> sol = new ArrayList<List<Game>>();
+		for (int round = 0; round < solution.size(); round++) {
+			List<Game> sol2 = new ArrayList<Game>();
+			for (int city = 0; city < solution.get(0).size(); city++) {
+				Game game = solution.get(round).get(city);
+				sol2.add(game);
+			}
+			sol.add(sol2);
+		}
+		return sol;
+	}
+	//
+	public ArrayList<Integer> getNeigh(int round){
+		//round1
+		ArrayList<Integer> neigh = new ArrayList<Integer>();
+		for(int otherRound = 0; otherRound < solution.size(); otherRound++){
+			if(otherRound!=round){
+				int costsRound = getSingeleCumulativeCost(round, otherRound);
+				neigh.add(otherRound, costsRound);
+			} else{
+				neigh.add(otherRound, Integer.MAX_VALUE);
+			}
+		}
+		return neigh;
+	}
+	//
+	//
+	public List<List<Integer>> getNeigh(){
+		List<List<Integer>> neigh = new ArrayList<List<Integer>>();
+		for(int round=0; round<neigh.size(); round++){
+			neigh.add(getNeigh(round));
+		}
+		return neigh;
+	}
+	//
+	public boolean checkConstraint(){
+		for (int round = 0; round < getRoundsNum(); round++) {
+			for (int city = 0; city < getCitiesNum(); city++) {
+				boolean canPlayHome = canPlayAt(city, round, true, consecHome, conseqRoad);
+				boolean canPlayAbroad = canPlayAt(city, round, false, consecHome, conseqRoad);
+				if(!canPlayHome || !canPlayAbroad){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	//
+	public List<ArrayList<Integer>> getGameList(){
+		List<ArrayList<Integer>> gameList = new ArrayList<ArrayList<Integer>>();
+		List<Game> games = new ArrayList<Game>();
+		for (int round = 0; round < getRoundsNum(); round++) {
+			for (int city = 0; city < getCitiesNum(); city++) {
+				Game game = getGameOfCityInRound(city, round);
+				if(!games.contains(game)){
+					games.add(game);
+					for (int round2 = round+1; round2 < getRoundsNum(); round2++) {
+							List<Game> otherGamesList = solution.get(round2);
+							for(int s = 0; s<otherGamesList.size(); s++){
+								Game otherGame = otherGamesList.get(s);				
+								if(game.comparePlayers(otherGame.a, otherGame.b)){
+									games.add(otherGame);
+									ArrayList<Integer> gameIdx = new ArrayList<Integer>();
+									gameIdx.add(city);
+									gameIdx.add(round);
+									gameIdx.add(round2);
+									gameList.add(gameIdx);
+								}
+							}
+					}
+				}
+				}
+		}
+		return gameList;
+	}
+	//
 }

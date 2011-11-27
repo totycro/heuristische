@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 
 public class proj1 {
@@ -24,7 +25,6 @@ public class proj1 {
 		}
 		// TODO: max consecutive home/abroad parameter
 		
-		
 		//String data = "data8.txt";
 		String data = args[0];
 		TxtFile txf = new TxtFile(data);
@@ -42,6 +42,7 @@ public class proj1 {
 		Greedy greedy = new Greedy(problem);
 		Solution sol = greedy.execute();
 		
+			
 		if (!sol.isComplete()) {
 			System.err.println("\ngreedy failed, part of solution: \n"+sol);
 			try {
@@ -62,20 +63,44 @@ public class proj1 {
 				e.printStackTrace(); 
 			}
 			System.err.println("\ngreedy solution: \n"+sol);
-			
-			System.err.println("all costs: " +  sol.getCumulativeCost(problem) );
+			System.err.println("all costs: " +  sol.getCumulativeCost() );
 		} else if (args[1].equals("-n1")) {
-			// TODO: first neighborhood
-			System.err.println("\nn1 TODO");
+			System.err.println("\ngreedy solution: \n"+sol);
+			System.err.println("all costs: " +  sol.getCumulativeCost() );
+			Neighborhood n1 = new Neighborhood(sol);
+			n1.neighborhoodRounds(2);
+			System.err.println("\ngreedy solution: \n"+sol);
+			System.err.println("all costs: " +  sol.getCumulativeCost() );
+			try {
+				PrintWriter p = new PrintWriter( new FileWriter("solution.txt") );
+				p.println(sol.toString());
+				p.flush();
+				p.close();
+			} catch (IOException e) {
+				e.printStackTrace(); 
+			}
 		} else if (args[1].equals("-n2")) {
-			// TODO: second neighborhood
-			System.err.println("\nn2 TODO");
+			System.err.println("\ngreedy solution: \n"+sol);
+			System.err.println("all costs: " +  sol.getCumulativeCost() );
+			//
+			Neighborhood n2 = new Neighborhood(sol);
+			n2.neighborhoodGames(2);
+			//
+			System.out.println("\nneigh. solution: \n"+sol);
+			System.out.println("all costs: " +  sol.getCumulativeCost() );
+			try {
+				PrintWriter p = new PrintWriter( new FileWriter("solution.txt") );
+				p.println(sol.toString());
+				p.flush();
+				p.close();
+			} catch (IOException e) {
+				e.printStackTrace(); 
+			}
 		} else {
 			System.err.println("invalid param: " + args[1]);
 			System.exit(1);
 		}
 	}
-	
 	
 	static private void printMatrix(int [][] M, PrintWriter out) {
 		for (int i=0; i<M.length; ++i) {

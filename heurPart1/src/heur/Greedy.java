@@ -33,7 +33,7 @@ public class Greedy {
 	public Solution execute(long seed) {
 		Random rand = new Random(seed);
 		
-		Solution solution = new Solution( problem.getCitiesNum() );
+		Solution solution = new Solution( problem.getCitiesNum(), problem );
 		
 		HashSet<Integer> _cities = new HashSet<Integer>();
 		for (int i=0; i<solution.getCitiesNum(); ++i) {
