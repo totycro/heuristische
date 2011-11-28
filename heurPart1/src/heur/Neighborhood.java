@@ -57,7 +57,7 @@ public class Neighborhood {
 				sol.setSolution(oldSolution);
 			}
 			else{
-				System.out.println("Improvement: "+game+" to "+otherGame);
+				System.out.println("Improvement: "+game+" to "+otherGame+" "+costs);
 			}
 		}
 	}
@@ -106,7 +106,7 @@ public class Neighborhood {
 			else{
 				solPossible.add(sol.deepCopy());
 				solPossibleCosts.add(costs);
-				solPossibleIdx.add(game+" "+round+" "+round2);
+				solPossibleIdx.add(game+" "+round+" "+round2+" "+costs);
 				sol.setSolution(oldSolution);
 			}
 		}
@@ -136,6 +136,93 @@ public class Neighborhood {
 		}
 	}
 	
+	private void bestNeighborhoodGame2(List<ArrayList<Integer>> listOfGames){
+		//
+		boolean orgSolutionFalse = sol.checkConstraint();
+		//
+		ArrayList<List<List<Game>>> solPossible = new ArrayList<List<List<Game>>>();
+		ArrayList<Integer> solPossibleCosts = new ArrayList<Integer>();
+		ArrayList<String> solPossibleIdx = new ArrayList<String>();
+		boolean improvement = true;
+		//
+		while(improvement){
+			//
+		for(int idx=0; idx<listOfGames.size(); idx++){
+			for(int idx2=idx+1; idx2<listOfGames.size(); idx2++){
+				for(int idx3=idx2+1; idx3<listOfGames.size(); idx3++){
+					for(int idx4=idx3+1; idx4<listOfGames.size(); idx4++){
+						for(int idx5=idx4+1; idx5<listOfGames.size(); idx5++){
+			//
+			ArrayList<Integer> idxList = new ArrayList<Integer>();
+			idxList.add(idx);
+			idxList.add(idx2);
+			idxList.add(idx3);
+			idxList.add(idx4);
+			idxList.add(idx5);
+			//
+			int costsOrg = sol.getCumulativeCost();
+			List<List<Game>> oldSolution = sol.deepCopy();
+			//
+			for(int ind=0; ind<idxList.size(); ind++){
+				ArrayList<Integer> gamesIdx = listOfGames.get(idxList.get(ind));
+				int city = gamesIdx.get(0);
+				int round = gamesIdx.get(1);
+				int round2 = gamesIdx.get(2);
+				Game game      = sol.getGameOfCityInRound(city, round);
+				Game otherGame = sol.getGameOfCityInRound(city, round2);
+				int idxGame  = sol.getSolution().get(round).indexOf(game);
+				int idxOtherGame = sol.getSolution().get(round2).indexOf(otherGame);
+				sol.getSolution().get(round).set(idxGame, otherGame);
+				sol.getSolution().get(round2).set(idxOtherGame, game);
+			}
+			//
+			int costs = sol.getCumulativeCost();
+			boolean badConstraint = sol.checkConstraint();
+			//
+			if(orgSolutionFalse && !badConstraint){
+				System.out.println("repair .... NEW SOLUTION (games exchange): "+costs);
+				System.out.println(sol);
+				orgSolutionFalse = (sol.checkConstraint());
+			}
+			else if((costsOrg<=costs) || badConstraint){
+				sol.setSolution(oldSolution);
+			}
+			else{
+				solPossible.add(sol.deepCopy());
+				solPossibleCosts.add(costs);
+				solPossibleIdx.add("new solution "+costs);
+				sol.setSolution(oldSolution);
+			}
+			}
+			}
+			}
+			}
+		}
+		if(!solPossible.isEmpty()){
+			int minIdx = 0;
+			int minIdxCosts = -1;
+			for(int s=0; s<solPossibleCosts.size(); s++){
+				if(s==0){
+					minIdxCosts = solPossibleCosts.get(minIdx);
+					sol.setSolution(solPossible.get(minIdx));
+				}
+				else{
+					if(solPossibleCosts.get(s)<minIdxCosts){
+						minIdx = s;
+						minIdxCosts = solPossibleCosts.get(s);
+					}
+				}
+			}
+			sol.setSolution(solPossible.get(minIdx));
+			System.out.println("Improvement (game exchange): "+solPossibleIdx.get(minIdx));
+			solPossibleCosts.clear();
+			solPossible.clear();
+		}
+		else{
+			improvement = false;
+		}
+		}
+	}
 	
 	/*
 	 * ROUNDS
@@ -171,7 +258,7 @@ public class Neighborhood {
 					sol.setSolution(oldSolution);
 				}
 				else{
-					System.out.println("Improvement: round "+sortIdx+" to "+s);
+					System.out.println("Improvement: round "+sortIdx+" to "+s+" "+costs);
 				}
 			}
 		}
@@ -269,7 +356,7 @@ public class Neighborhood {
 					}
 				}
 				sol.setSolution(solPossible.get(minIdx));
-				System.out.println("Improvement (rounds exchange): "+solPossibleIdx.get(minIdx));
+				System.out.println("Improvement (rounds exchange): "+solPossibleIdx.get(minIdx)+" "+sol.getCumulativeCost());
 				solPossibleCosts.clear();
 				solPossible.clear();
 			}
@@ -309,6 +396,9 @@ public class Neighborhood {
 			for(int i=0; i<sol.getRoundsNum(); i++){
 				moveListIdx(i);
 				bestNeighborhoodRounds();
+				List<ArrayList<Integer>> listOfGames = sol.getGameList();
+				bestNeighborhoodGame(listOfGames);
+				bestNeighborhoodGame2(listOfGames);
 			}
 		}
 		//

@@ -42,6 +42,7 @@ public class proj1 {
 		Greedy greedy = new Greedy(problem);
 		Solution sol = greedy.execute();
 		
+		System.out.println(sol.checkConstraint());
 			
 		if (!sol.isComplete()) {
 			System.err.println("\ngreedy failed, part of solution: \n"+sol);
@@ -84,8 +85,24 @@ public class proj1 {
 			System.err.println("all costs: " +  sol.getCumulativeCost() );
 			//
 			Neighborhood n2 = new Neighborhood(sol);
-			n2.neighborhoodRounds(1);
 			n2.neighborhoodGames(2);
+			//
+			System.out.println("\nneigh. solution: \n"+sol);
+			System.out.println("all costs: " +  sol.getCumulativeCost() );
+			try {
+				PrintWriter p = new PrintWriter( new FileWriter("solution.txt") );
+				p.println(sol.toString());
+				p.flush();
+				p.close();
+			} catch (IOException e) {
+				e.printStackTrace(); 
+			}
+		} else if (args[1].equals("-n3")) {
+			System.err.println("\ngreedy solution: \n"+sol);
+			System.err.println("all costs: " +  sol.getCumulativeCost() );
+			//
+			Neighborhood n3 = new Neighborhood(sol);
+			n3.neighborhoodRounds(3);
 			//
 			System.out.println("\nneigh. solution: \n"+sol);
 			System.out.println("all costs: " +  sol.getCumulativeCost() );
