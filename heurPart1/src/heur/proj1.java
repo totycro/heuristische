@@ -84,6 +84,7 @@ public class proj1 {
 			System.err.println("all costs: " +  sol.getCumulativeCost() );
 			//
 			Neighborhood n2 = new Neighborhood(sol);
+			n2.neighborhoodRounds(1);
 			n2.neighborhoodGames(2);
 			//
 			System.out.println("\nneigh. solution: \n"+sol);

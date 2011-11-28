@@ -19,9 +19,12 @@ public class Neighborhood {
 	}
 	
 	/*
-	 * neighborhood games 
+	 * GAMES
 	 */
+	/*	 * neighborhood games 	 */
 	private void listNeighborhoodGame(List<ArrayList<Integer>> listOfGames, ArrayList<Integer> sortList){
+		//
+		boolean orgSolutionFalse = sol.checkConstraint();
 		//
 		for(int idx=0; idx<sortList.size(); idx++){
 			//
@@ -44,7 +47,13 @@ public class Neighborhood {
 			//
 			int costs = sol.getCumulativeCost();
 			boolean badConstraint = sol.checkConstraint();
-			if((costsOrg<=costs) || badConstraint){
+			//
+			if(orgSolutionFalse && !badConstraint){
+				System.out.println("repair .... NEW SOLUTION (games exchange): "+costs);
+				System.out.println(sol);
+				orgSolutionFalse = (sol.checkConstraint());
+			}
+			else if((costsOrg<=costs) || badConstraint){
 				sol.setSolution(oldSolution);
 			}
 			else{
@@ -53,42 +62,13 @@ public class Neighborhood {
 		}
 	}
 	
-	/*
-	 * neighborhood rounds 
-	 */
-	private void listNeighborhoodRounds(ArrayList<Integer> sortList){
-		//
-		for(int idx=0; idx<sol.getRoundsNum(); idx++){
-			for(int s=0; s<sol.getRoundsNum(); s++){
-				//
-				int costsOrg = sol.getCumulativeCost();
-				List<List<Game>> oldSolution = sol.deepCopy();
-				//
-				int sortIdx = sortList.get(idx);
-				List<Game> curRound   = sol.getRound(sortIdx);
-				List<Game> otherRound = sol.getRound(s);
-				//
-				sol.getSolution().set(sortIdx, otherRound);
-				sol.getSolution().set(s,  curRound);
-				//
-				int costs = sol.getCumulativeCost();
-				boolean badConstraint = sol.checkConstraint();
-				//
-				if((costsOrg<=costs) || badConstraint){
-					sol.setSolution(oldSolution);
-				}
-				else{
-					System.out.println("Improvement: round "+sortIdx+" to "+s);
-				}
-			}
-		}
-	}
-	
 	private void bestNeighborhoodGame(List<ArrayList<Integer>> listOfGames){
 		//
+		boolean orgSolutionFalse = sol.checkConstraint();
+		//
 		ArrayList<List<List<Game>>> solPossible = new ArrayList<List<List<Game>>>();
-		List<List<Game>> bestSol = null;
-		int bestSolCost = -1;
+		ArrayList<Integer> solPossibleCosts = new ArrayList<Integer>();
+		ArrayList<String> solPossibleIdx = new ArrayList<String>();
 		boolean improvement = true;
 		//
 		while(improvement){
@@ -114,46 +94,136 @@ public class Neighborhood {
 			//
 			int costs = sol.getCumulativeCost();
 			boolean badConstraint = sol.checkConstraint();
-			if((costsOrg<=costs) || badConstraint){
+			//
+			if(orgSolutionFalse && !badConstraint){
+				System.out.println("repair .... NEW SOLUTION (games exchange): "+costs);
+				System.out.println(sol);
+				orgSolutionFalse = (sol.checkConstraint());
+			}
+			else if((costsOrg<=costs) || badConstraint){
 				sol.setSolution(oldSolution);
 			}
 			else{
 				solPossible.add(sol.deepCopy());
-				System.out.println("possible change: "+game+" "+otherGame+": "+costs);
-				//
-				if( bestSol==null || costs<bestSolCost ){
-					bestSol = sol.deepCopy();
-					bestSolCost = costs;
-					System.out.println("new solution ");
-				}
-				//
+				solPossibleCosts.add(costs);
+				solPossibleIdx.add(game+" "+round+" "+round2);
 				sol.setSolution(oldSolution);
 			}
 		}
 		if(!solPossible.isEmpty()){
-			sol.setSolution(solPossible.get(0));
-			solPossible.remove(0);
+			int minIdx = 0;
+			int minIdxCosts = -1;
+			for(int s=0; s<solPossibleCosts.size(); s++){
+				if(s==0){
+					minIdxCosts = solPossibleCosts.get(minIdx);
+					sol.setSolution(solPossible.get(minIdx));
+				}
+				else{
+					if(solPossibleCosts.get(s)<minIdxCosts){
+						minIdx = s;
+						minIdxCosts = solPossibleCosts.get(s);
+					}
+				}
+			}
+			sol.setSolution(solPossible.get(minIdx));
+			System.out.println("Improvement (game exchange): "+solPossibleIdx.get(minIdx));
+			solPossibleCosts.clear();
+			solPossible.clear();
 		}
 		else{
 			improvement = false;
 		}
 		}
-		if(bestSol!=null){
-			sol.setSolution(bestSol);
+	}
+	
+	
+	/*
+	 * ROUNDS
+	 */
+	
+	/*	 * neighborhood rounds 	 */
+	private void listNeighborhoodRounds(ArrayList<Integer> sortList){
+		//
+		boolean orgSolutionFalse = sol.checkConstraint();
+		//
+		for(int idx=0; idx<sol.getRoundsNum(); idx++){
+			for(int s=idx+1; s<sol.getRoundsNum(); s++){
+				//
+				int costsOrg = sol.getCumulativeCost();
+				List<List<Game>> oldSolution = sol.deepCopy();
+				//
+				int sortIdx = sortList.get(idx);
+				List<Game> curRound   = sol.getRound(sortIdx);
+				List<Game> otherRound = sol.getRound(s);
+				//
+				sol.getSolution().set(sortIdx, otherRound);
+				sol.getSolution().set(s,  curRound);
+				//
+				int costs = sol.getCumulativeCost();
+				boolean badConstraint = sol.checkConstraint();
+				//
+				if(orgSolutionFalse && !badConstraint){
+					System.out.println("repair .... NEW SOLUTION (rounds exchange): "+costs);
+					System.out.println(sol);
+					orgSolutionFalse = (sol.checkConstraint());
+				}
+				else if((costsOrg<=costs) || badConstraint){
+					sol.setSolution(oldSolution);
+				}
+				else{
+					System.out.println("Improvement: round "+sortIdx+" to "+s);
+				}
+			}
+		}
+	}
+	
+	/*	 * neighborhood rounds 	 */
+	private void moveListIdx(int roundCnt){
+		//
+		boolean orgSolutionFalse = sol.checkConstraint();
+		//
+		while(roundCnt>0){
+		//
+		int costsOrg = sol.getCumulativeCost();
+		List<List<Game>> oldSolution = sol.deepCopy();
+		//
+		for(int idx=0; idx<sol.getRoundsNum()-1; idx++){
+			sol.getSolution().set(idx+1, oldSolution.get(idx));
+		}
+		sol.getSolution().set(0, oldSolution.get(sol.getRoundsNum()-1));
+		//
+		int costs = sol.getCumulativeCost();
+		boolean badConstraint = sol.checkConstraint();
+		//
+		if(orgSolutionFalse && !badConstraint){
+			System.out.println("repair .... NEW SOLUTION (move rounds): "+costs);
+			System.out.println(sol);
+			orgSolutionFalse = (sol.checkConstraint());
+		}
+		else if((costsOrg<=costs) || badConstraint){
+			sol.setSolution(oldSolution);
+		}
+		else{
+			System.out.println("Improvement: round "+roundCnt+": "+costs);
+		}
+		//
+		roundCnt = roundCnt-1;
 		}
 	}
 	
 	private void bestNeighborhoodRounds(){
 		//
+		boolean orgSolutionFalse = sol.checkConstraint();
+		//
 		ArrayList<List<List<Game>>> solPossible = new ArrayList<List<List<Game>>>();
-		List<List<Game>> bestSol = null;
-		int bestSolCost = -1;
+		ArrayList<Integer> solPossibleCosts = new ArrayList<Integer>();
+		ArrayList<String> solPossibleIdx = new ArrayList<String>();
 		boolean improvement = true;
 		//
 		while(improvement){
 			//
-		for(int idx=0; idx<sol.getRoundsNum(); idx++){
-			for(int s=idx; s<sol.getRoundsNum(); s++){
+			for(int idx=0; idx<sol.getRoundsNum(); idx++){
+				for(int s=idx+1; s<sol.getRoundsNum(); s++){
 				//
 				int costsOrg = sol.getCumulativeCost();
 				List<List<Game>> oldSolution = sol.deepCopy();
@@ -167,102 +237,57 @@ public class Neighborhood {
 				int costs = sol.getCumulativeCost();
 				boolean badConstraint = sol.checkConstraint();
 				//
-				if((costsOrg<=costs) || badConstraint){
+				if(orgSolutionFalse && !badConstraint){
+					System.out.println("repair .... NEW SOLUTION (rounds exchange): "+costs);
+					System.out.println(sol);
+					orgSolutionFalse = (sol.checkConstraint());
+				}
+				else if((costsOrg<=costs) || badConstraint){
 					sol.setSolution(oldSolution);
 				}
 				else{
 					solPossible.add(sol.deepCopy());
-					System.out.println("possible change: "+idx+" "+s+": "+costs);
-					//
-					if( bestSol==null || costs<bestSolCost ){
-						bestSol = sol.deepCopy();
-						bestSolCost = costs;
-						System.out.println("new solution ");
-					}
-					//
-					sol.setSolution(oldSolution);
-				}
-			}
-		}
-		if(!solPossible.isEmpty()){
-			sol.setSolution(solPossible.get(0));
-			solPossible.remove(0);
-		}
-		else{
-			improvement = false;
-		}
-		}
-		if(bestSol!=null){
-			sol.setSolution(bestSol);
-		}
-	}
-	
-	//still in work
-	private void bestNeighborhoodRoundsBigger(){
-		//
-		LinkedList<List<List<Game>>> solPossible = new LinkedList<List<List<Game>>>();
-		//
-		List<List<Game>> bestSol = null;
-		int bestSolCost = -1;
-		boolean improvement = true;
-		int improvementCnt = 0;
-		//
-		//Permutation p = new Permutation(3);
-		//
-		while(improvement){
-			//
-		improvementCnt = 0;
-		for(int idx=0; idx<sol.getRoundsNum(); idx++){
-			for(int s=idx; s<sol.getRoundsNum(); s++){
-				for(int t=s; t<sol.getRoundsNum(); t++){
-				//
-				int costsOrg = sol.getCumulativeCost();
-				List<List<Game>> oldSolution = sol.deepCopy();
-				//
-				List<Game> curRound   = sol.getRound(idx);
-				List<Game> otherRound = sol.getRound(s);
-				List<Game> thirdRound = sol.getRound(t);
-				//
-				sol.getSolution().set(idx, thirdRound);
-				sol.getSolution().set(  s, curRound);
-				sol.getSolution().set(  t, otherRound);
-				//
-				int costs = sol.getCumulativeCost();
-				boolean badConstraint = sol.checkConstraint();
-				//
-				if((costsOrg<=costs) || badConstraint){
-					sol.setSolution(oldSolution);
-				}
-				else{
-					//System.out.println("possible change: "+idx+" "+s+" "+t+": "+costs);
-					solPossible.add(sol.deepCopy());
-					//
-					if( bestSol==null || costs<bestSolCost ){
-						bestSol = sol.deepCopy();
-						bestSolCost = costs;
-						System.out.println("new solution "+costs);
-						improvementCnt = improvementCnt+1;
-					}
-					//
+					solPossibleCosts.add(costs);
+					solPossibleIdx.add(idx+" "+s);
 					sol.setSolution(oldSolution);
 				}
 				}
 			}
-		}
-		if(!solPossible.isEmpty()){
-			//sol.setSolution(solPossible.get(0));
-			//solPossible.remove(0);
-			sol.setSolution(solPossible.poll());
-		}
-		else{
-			improvement = false;
-		}
-		}
-		if(bestSol!=null){
-			sol.setSolution(bestSol);
+			if(!solPossible.isEmpty()){
+				int minIdx = 0;
+				int minIdxCosts = -1;
+				for(int s=0; s<solPossibleCosts.size(); s++){
+					if(s==0){
+						minIdxCosts = solPossibleCosts.get(minIdx);
+						sol.setSolution(solPossible.get(minIdx));
+					}
+					else{
+						if(solPossibleCosts.get(s)<minIdxCosts){
+							minIdx = s;
+							minIdxCosts = solPossibleCosts.get(s);
+						}
+					}
+				}
+				sol.setSolution(solPossible.get(minIdx));
+				System.out.println("Improvement (rounds exchange): "+solPossibleIdx.get(minIdx));
+				solPossibleCosts.clear();
+				solPossible.clear();
+			}
+			else{
+				improvement = false;
+			}
 		}
 	}
 	
+	/*
+	 * CALL METHODS
+	 */
+	/*
+	 * neighbor games
+	 * 0: random neighborhood
+	 * 1: next improvement
+	 * 2: best improvement
+	 */
 	public void neighborhoodRounds(int neighChoice){	
 		//
 		if(neighChoice==0){ //random neighbor
@@ -281,8 +306,10 @@ public class Neighborhood {
 			bestNeighborhoodRounds();
 		}
 		else if(neighChoice==3){
-			//not working yet
-			//bestNeighborhoodRoundsBigger();
+			for(int i=0; i<sol.getRoundsNum(); i++){
+				moveListIdx(i);
+				bestNeighborhoodRounds();
+			}
 		}
 		//
 		System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost());
@@ -315,6 +342,9 @@ public class Neighborhood {
 		//
 	}
 	
+	/*
+	 * form random list to sorted list
+	 */
 	//get random list with all numbers of n
 	private ArrayList<Integer> getRandomListWithoutRepeats(int n){
 		ArrayList<Integer> randomList = new ArrayList<Integer>();
@@ -363,53 +393,6 @@ public class Neighborhood {
 		Collections.sort(sortList);
 		int sortIdx = (neighL.indexOf(sortList.get(idx)));
 		return sortIdx;
-	}
-	
-	//currently not used
-	private void changeToMax(ArrayList<ArrayList<Integer>> changePos, int struc){
-		int minIdx = -1;
-		int minCosts = -1;
-		for(int ind = 0; ind<changePos.size(); ind++){
-			int cost = changePos.get(ind).get(0);
-			if(minIdx<0 || minCosts>cost){
-				minIdx = ind;
-				minCosts = cost;
-			}
-		}
-		ArrayList<Integer> improv = changePos.get(minIdx);
-		//
-		if(struc==0){
-			int roundA = improv.get(1);
-			int roundB = improv.get(2);
-			//
-			List<Game> g1 = (sol.getSolution().get(roundA));
-			List<Game> g2 = (sol.getSolution().get(roundB));
-			//
-			sol.getSolution().set(roundA, g1);
-			sol.getSolution().set(roundB, g2);
-		}
-		else{
-			//		
-			int roundA = improv.get(1);
-			int idxA = improv.get(2);
-			int roundB = improv.get(3);
-			int idxB = improv.get(4);
-			//
-			Game g1 = (sol.getSolution().get(roundA).get(idxA));
-			Game g2 = (sol.getSolution().get(roundB).get(idxB));
-			//
-			sol.getSolution().get(roundA).set(idxA, g2);
-			sol.getSolution().get(roundB).set(idxB, g1);
-			//
-			System.out.println("change: "+g1+" "+g2);
-			//
-		}
-		//
-		int costs = sol.getCumulativeCost();
-		//
-		System.out.println("Improvement: "+costs);
-		//
-		changePos.clear();
 	}
 	
 }
