@@ -236,9 +236,12 @@ public class Solution {
 
 		// select an unused, current free team
 		for (int candidate : candidates) {
+			/*
+			 disable repeat constraint
 			if ( round > 0 && getGameOfCityInRound(city, round-1).contains(candidate)) { // repeat constraint
 				continue;
 			}
+			*/
 			if (!usedHome.contains(candidate)) {
 				// play at home against candidate
 				 // NOTE: this is not optimal here, we could have cut a lot of games if we did it earlier
