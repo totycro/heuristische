@@ -312,11 +312,6 @@ public class Solution {
 		int cost = 0;
 			
 		for (int round=0; round<getCurrentRound(); ++round) {
-			/*
-			if (round == 1) {
-				System.err.println("first round cost: "+ cost);
-			}
-			*/
 			for (int player=0; player<getCitiesNum(); player++) {
 				int lastLoc = (round == 0) ? player : getLocationOfGame(player, round-1);
 				int gameLocation = getLocationOfGame(player, round);
