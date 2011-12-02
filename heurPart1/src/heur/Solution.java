@@ -278,6 +278,25 @@ public class Solution {
 		return false; // condition above not hit, so all were at the bad location
 	}
 
+	public int canPlayAtCnt(int city, int round, boolean home, int consecHome, int conseqRoad) {
+		int roundBeforeLast = round - 1;
+		// check relevant games
+		// consecHome = 3  => if last 3 games were at home, we can't play at home any more
+		int cnt = 0;
+		for (int i=roundBeforeLast; i > (roundBeforeLast - (home ? consecHome : conseqRoad)); i--) {
+			if (i < 0) { // we want back before the history has started, therefore the constraint can't be already violated
+				break;
+			}
+			Game game = getGameOfCityInRound(city, i);
+			boolean playedAtHome = game.playAt(city);
+			if ( (!playedAtHome && home) || ( playedAtHome && !home) ) {
+				break;
+			}
+			cnt = cnt+1;
+		}
+		return cnt; // condition above not hit, so all were at the bad location
+	}
+	
 	public void addGame(Game game, int round) {
 		// sanity
 		for (Game g : getRound(round)) {
@@ -330,7 +349,7 @@ public class Solution {
 		}
 		return cost;
 	}
-	
+	//////////////////////////////////////////////////////////////////////////////
 	public int getSingeleCumulativeCost(int round, int otherRound) {
 		int cost = 0;
 		for (int player=0; player<getCitiesNum(); player++) {
@@ -342,14 +361,26 @@ public class Solution {
 		}
 		return cost;
 	}
-	/*
-	public int getSingeleCumulativeCost(Problem problem, int round, int otherRound, int city) {
-		int lastLoc = getLocationOfGame(city, otherRound);
-		int gameLocation = getLocationOfGame(city, round);
-		return problem.getDistance(lastLoc, gameLocation);
+	public ArrayList<Integer> getCumulativeCostOfRound( ) {
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		for(int roundNum=0; roundNum<getRoundsNum(); roundNum++){
+			if(roundNum==0){
+				list.add(0);
+			}
+			else{
+				list.add(getSingeleCumulativeCost( roundNum, roundNum-1));
+			}
+		}
+		return list;
 	}
-	*/
-	
+	public ArrayList<Integer> getCumulativeCostOfAllRound( int round ) {
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		for(int roundNum=0; roundNum<getRoundsNum(); roundNum++){
+			list.add(getSingeleCumulativeCost( roundNum, round));
+		}
+		return list;
+	}
+	//////////////////////////////////////////////////////////////////////////////
 	public List<List<Game>> deepCopy(){
 		List<List<Game>> sol = new ArrayList<List<Game>>();
 		for (int round = 0; round < solution.size(); round++) {
@@ -387,13 +418,45 @@ public class Solution {
 	}
 	//
 	public boolean checkConstraint(){
+		//
 		for (int round = 0; round < getRoundsNum(); round++) {
 			for (int city = 0; city < getCitiesNum(); city++) {
-				boolean canPlayHome = canPlayAt(city, round, true, consecHome, conseqRoad);
-				boolean canPlayAbroad = canPlayAt(city, round, false, consecHome, conseqRoad);
-				if(!canPlayHome || !canPlayAbroad){
-					return true;
+				//
+				Game game = getGameOfCityInRound(city, round);
+				//
+				if((!game.playAtA) && (city==game.a)){
+					boolean canPlayAbroad = canPlayAt(city, round, false, consecHome, conseqRoad);
+					if(!canPlayAbroad){
+						return true;
+					}
 				}
+				if((game.playAtA) && (city==game.b)){
+					boolean canPlayAbroad = canPlayAt(city, round, false, consecHome, conseqRoad);
+					if(!canPlayAbroad){
+						return true;
+					}
+				}
+				if((game.playAtA) && (city==game.a)){
+					boolean canPlayHome = canPlayAt(city, round, true, consecHome, conseqRoad);
+					if(!canPlayHome){
+						return true;
+					}
+				}
+				if((!game.playAtA) && (city==game.b)){
+					boolean canPlayHome = canPlayAt(city, round, true, consecHome, conseqRoad);
+					if(!canPlayHome){
+						return true;
+					}
+				}
+				//
+				if((round!=0)){
+					Game otherGame = getGameOfCityInRound(city, round-1);
+					if( (game.a==otherGame.a && game.b==otherGame.b) && (game.b==otherGame.a && game.a==otherGame.b)){
+						System.out.println("USED check repeat");
+						return true;
+					}
+				}
+				
 			}
 		}
 		return false;
@@ -422,9 +485,179 @@ public class Solution {
 							}
 					}
 				}
+				
 				}
 		}
 		return gameList;
 	}
 	//
+	public List<ArrayList<Integer>> getGameListCosts(){
+		List<ArrayList<Integer>> gameList = new ArrayList<ArrayList<Integer>>();
+		List<Game> games = new ArrayList<Game>();
+		for (int round = 0; round < getRoundsNum(); round++) {
+			for (int city = 0; city < getCitiesNum(); city++) {
+				Game game = getGameOfCityInRound(city, round);
+				if(!games.contains(game)){
+					games.add(game);
+					for (int round2 = round+1; round2 < getRoundsNum(); round2++) {
+							List<Game> otherGamesList = solution.get(round2);
+							for(int s = 0; s<otherGamesList.size(); s++){
+								Game otherGame = otherGamesList.get(s);				
+								if(game.comparePlayers(otherGame.a, otherGame.b)){
+									//
+									int cost;
+									int cost2;
+									//
+									if(round!=0){
+										int lastLoc = getLocationOfGame(city, round-1);
+										int gameLocation = getLocationOfGame(city, round);
+										cost = problem.getDistance(lastLoc, gameLocation);
+										//
+										int lastLoc2 = getLocationOfGame(city, round2-1);
+										int gameLocation2 = getLocationOfGame(city, round2);
+										cost2 = problem.getDistance(lastLoc2, gameLocation2);
+									}
+									else{
+										int gameLocation = getLocationOfGame(city, round);
+										cost = problem.getDistance(city, gameLocation);
+										//
+										int gameLocation2 = getLocationOfGame(city, round2);
+										cost2 = problem.getDistance(city, gameLocation2);
+									}
+									//
+									games.add(otherGame);
+									//
+									ArrayList<Integer> gameIdx = new ArrayList<Integer>();
+									gameIdx.add(city);
+									gameIdx.add(round);
+									gameIdx.add(round2);
+									gameIdx.add(cost);
+									gameIdx.add(cost2);
+									gameList.add(gameIdx);
+								}
+							}
+					}
+				}
+				
+				}
+		}
+		return gameList;
+	}
+	//
+	public List<ArrayList<Integer>> getGameListWithCnt(){
+		List<ArrayList<Integer>> gameList = new ArrayList<ArrayList<Integer>>();
+		List<Game> games = new ArrayList<Game>();
+		for (int round = 0; round < getRoundsNum(); round++) {
+			for (int city = 0; city < getCitiesNum(); city++) {
+				Game game = getGameOfCityInRound(city, round);
+				///////////////////
+				int cntPlay=0;
+				if((!game.playAtA) && (city==game.a)){
+					cntPlay = canPlayAtCnt(city, round, false, consecHome, conseqRoad);
+				}
+				if((game.playAtA) && (city==game.b)){
+					cntPlay = canPlayAtCnt(city, round, false, consecHome, conseqRoad);
+				}
+				if((game.playAtA) && (city==game.a)){
+					cntPlay = canPlayAtCnt(city, round, true, consecHome, conseqRoad);
+				}	
+				if((!game.playAtA) && (city==game.b)){
+					cntPlay = canPlayAtCnt(city, round, true, consecHome, conseqRoad);
+				}
+				///////////////////
+				//if(!games.contains(game)){
+					games.add(game);
+					for (int round2 = round+1; round2 < getRoundsNum(); round2++) {
+							List<Game> otherGamesList = solution.get(round2);
+							for(int s = 0; s<otherGamesList.size(); s++){
+								Game otherGame = otherGamesList.get(s);				
+								if(game.comparePlayers(otherGame.a, otherGame.b)){
+									games.add(otherGame);
+									ArrayList<Integer> gameIdx = new ArrayList<Integer>();
+									gameIdx.add(city);
+									gameIdx.add(round);
+									gameIdx.add(round2);
+									gameIdx.add(cntPlay);
+									gameList.add(gameIdx);
+								}
+							}
+					//}
+				}
+				
+				}
+		}
+		return gameList;
+	}
+	//
+	public ArrayList<Integer> getRoundListWithCnt(){
+		ArrayList<Integer> cntPlayList = new ArrayList<Integer>();
+		for (int round = 0; round < getRoundsNum(); round++) {
+			int cntPlay=0;
+			for (int city = 0; city < getCitiesNum(); city++) {
+				Game game = getGameOfCityInRound(city, round);
+				if((!game.playAtA) && (city==game.a)){
+					cntPlay += canPlayAtCnt(city, round, false, consecHome, conseqRoad);
+				}
+				if((game.playAtA) && (city==game.b)){
+					cntPlay += canPlayAtCnt(city, round, false, consecHome, conseqRoad);
+				}
+				if((game.playAtA) && (city==game.a)){
+					cntPlay += canPlayAtCnt(city, round, true, consecHome, conseqRoad);
+				}	
+				if((!game.playAtA) && (city==game.b)){
+					cntPlay += canPlayAtCnt(city, round, true, consecHome, conseqRoad);
+				}
+			}
+			//System.out.println(cntPlay);
+			cntPlayList.add(cntPlay);
+		}
+		return cntPlayList;
+	}
+	//
+	public List<ArrayList<ArrayList<Integer>>> getGameListPerPlayer(){
+		List<ArrayList<ArrayList<Game>>> gameList = new ArrayList<ArrayList<ArrayList<Game>>>();
+		List<ArrayList<ArrayList<Integer>>> gameListInteger = new ArrayList<ArrayList<ArrayList<Integer>>>();
+		for(int i=0;i<n;i++){
+			ArrayList<ArrayList<Game>> gamePlayers = new ArrayList<ArrayList<Game>>();
+			gameList.add(gamePlayers);
+			ArrayList<ArrayList<Integer>> gamePlayersInteger = new ArrayList<ArrayList<Integer>>();
+			gameListInteger.add(gamePlayersInteger);
+		}
+		for (int round = 0; round < getRoundsNum(); round++) {
+			for (int city = 0; city < getCitiesNum(); city++) {
+				Game game = getGameOfCityInRound(city, round);
+				for (int round2 = 0; round2 < getRoundsNum(); round2++) {
+					if(round!=round2){
+						List<Game> otherGamesList = solution.get(round2);
+						for(int s = 0; s<otherGamesList.size(); s++){
+							Game otherGame = otherGamesList.get(s);				
+							if(game.comparePlayers(otherGame.a, otherGame.b)){
+								ArrayList<Game> gameIdx = new ArrayList<Game>();
+								gameIdx.add(game);
+								gameIdx.add(otherGame);
+								//
+								ArrayList<Integer> gameIdxInteger = new ArrayList<Integer>();
+								gameIdxInteger.add(city);
+								gameIdxInteger.add(round);
+								gameIdxInteger.add(round2);
+								if(game.playAtA){
+									if(!gameList.get(game.a).contains(gameIdx)){
+										gameList.get(game.a).add(gameIdx);
+										gameListInteger.get(game.a).add(gameIdxInteger);
+									}
+								}
+								else{
+									if(!gameList.get(game.b).contains(gameIdx)){
+										gameList.get(game.b).add(gameIdx);
+										gameListInteger.get(game.b).add(gameIdxInteger);
+									}
+								}
+							}
+						}
+					}
+					}
+				}
+		}
+		return gameListInteger;
+	}
 }
