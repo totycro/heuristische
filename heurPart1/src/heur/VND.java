@@ -11,7 +11,6 @@ public class VND {
 	
 	
 	public VND() {
-		// TODO: neighborhoods + their next function (next/best)
 		
 	}
 	

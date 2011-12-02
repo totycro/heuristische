@@ -21,7 +21,9 @@ public class Greedy {
 	}
 	public Greedy(Problem problem, boolean silenceLogger) {
 		this.problem = problem;
-		log.setLevel( Level.OFF );
+		if (silenceLogger) {
+			log.setLevel( Level.OFF );
+		}
 	}
 	
 	/**
@@ -36,7 +38,7 @@ public class Greedy {
 		// rng for rng seeds
 		
 		for (int i=0;;i++) {
-			if (i%100 == 0) {
+			if (i%10000 == 0) {
 				System.err.println("try: " + i);
 			}
 			long subSeed = rand.nextLong();

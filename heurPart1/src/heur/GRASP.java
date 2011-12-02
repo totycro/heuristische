@@ -7,7 +7,7 @@ public class GRASP {
 		
 	private final static Logger log = Logger.getLogger(Greedy.class.getName());
 	static  {
-		Util.setupLogger(log, /*on=*/false);
+		Util.setupLogger(log, /*on=*/true);
 	}
 	
 	private long seed;
@@ -18,29 +18,34 @@ public class GRASP {
 	
 	public Solution execute(Problem problem, int iterations) {
 		
-		Greedy greedy = new Greedy(problem, /*silenceLogger=*/true);
+		Greedy greedy = new Greedy(problem); //, /*silenceLogger=*/true);
 		
 		Random rand = new Random(seed);
 		
 		Solution bestSol = null;
 		assert (iterations > 0);
+		int oldCost = Integer.MAX_VALUE;
 		for (int i=0; i<iterations; ++i) {
-			log.info("grasp iteration "+i);
+			System.err.println("\ngrasp iteration "+i);
 			
 			Solution sol = greedy.execute( rand.nextLong() );
 			
-			localSearch(sol);
+			VND vnd = new VND();
+			vnd.execute(sol);
 			
-			// TODO: if better:
-			bestSol = sol;
+			log.warning("new solution cost: " + sol.getCumulativeCost());
+			int newCosts = sol.getCumulativeCost() ;
+			System.err.println("new solution cost: " + newCosts);
+			if (newCosts < oldCost) {
+				oldCost = newCosts;
+				System.err.println("is new min");
+				bestSol = sol;
+			} else {
+				System.err.println("is worse, cur min: "+oldCost);
+			}
 		}
 		
 		return bestSol;
-	}
-
-	private void localSearch(Solution sol) {
-		// TODO
-		
 	}
 
 }

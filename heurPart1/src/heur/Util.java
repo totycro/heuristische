@@ -43,7 +43,7 @@ public class Util {
 		log.addHandler( new Handler() {
 			@Override
 			public void publish(LogRecord record) {
-				System.err.println(record.getLevel() + ": " + record.getMessage());
+				//System.err.println(record.getLevel() + ": " + record.getMessage());
 			}
 			@Override
 			public void flush() { }
