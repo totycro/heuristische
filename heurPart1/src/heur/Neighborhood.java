@@ -1244,7 +1244,7 @@ public class Neighborhood {
 			//ArrayList<Integer> sortList = getRandomList(listOfGames.size());
 			//listNeighborhoodGame(listOfGames, sortList);
 			//listNeighborhoodGameRandom(List<ArrayList<Integer>> listOfGames, int n, int changeCnt, int sRandom)
-			for(int i=0; i<6; i++){
+			for(int i=0; i<5; i++){
 				listNeighborhoodGameRandom(listOfGames, listOfGames.size(), i, 15000);
 			}
 			
