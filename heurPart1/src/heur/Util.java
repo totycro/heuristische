@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 
 public class Util {
 	
+	public static boolean CHECK_REPEATERS = true;
+	
 	/**
 	 * Picks an arbitrary element from the set, removes it and returns it.
 	 */
