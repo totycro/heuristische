@@ -1,0 +1,133 @@
+\documentclass[%
+			%fontsize=12pt,%
+			paper=a4,% 
+			%DIV12, % mehr text pro seite als defaultyyp
+			DIV12,
+			%DIV=calc,%
+			%twoside=false,%
+			liststotoc,
+			bibtotoc,
+			draft=false,% final|draft % draft ist platzsparender (kein code, bilder..)
+			notitlepage,
+			numbers=noendperiod
+			]{scrartcl}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+% for color-highlighted code
+\usepackage[usenames]{color} % for grey comments
+%\usepackage{alltt}
+
+\usepackage[doublespacing]{setspace}
+\usepackage{tabularx}
+\usepackage{comment}
+\usepackage{color}
+\usepackage[final]{listings} % sourcecode in document
+\usepackage{url}      % for urls
+\usepackage{multicol}
+\usepackage{caption}
+\usepackage{subfigure}
+\usepackage{enumerate}
+
+\usepackage{graphicx}
+
+%\usepackage[square]{natbib} % \cite ; square|round etc.
+\usepackage[numbers,square]{natbib}
+%\usepackage[square, authoryear]{natbib}
+
+%\usepackage{bibgerm}
+%\bibliographystyle{plain}
+%\bibliographystyle{alpha}
+\bibliographystyle{alphadin}
+%\bibliographystyle{dinat}
+%\bibliographystyle{chicago}
+%\bibliographystyle{plainnat}
+
+%\bibdata{bib.bib}
+
+\newcommand{\zit}[3]{#1 \cite{#2}, #3}
+\newcommand{\zitx}[2]{#1 \cite{#2}}
+\newcommand{\footzit}[3]{\footnote{\zit{#1}{#2}{#3}}}
+\newcommand{\footzitx}[2]{\footnote{\zitx{#1}{#2}}}
+
+\newcommand{\footurl}[2]{\footnote{\url{#1}, abgerufen am #2}}
+
+\newcommand{\inlinecode}[1]{\mbox{\texttt{#1}}}
+
+\newcommand{\mynull}{\textit{NULL}}
+%\newcommand{\mynull}{\textbf{nil}}
+
+\newcommand{\kd}{\mbox{\textit{k}-d}}
+
+\renewcommand*{\partformat}{\partname\ \thepart\ -}
+\let\partheadmidvskip\
+
+
+
+% smaller url style
+\makeatletter
+\def\url@leostyle{%
+\@ifundefined{selectfont}{\def\UrlFont{\sf}}{\def\UrlFont{\small\ttfamily}}}
+\makeatother
+\urlstyle{leo}
+
+\newcommand{\myfig}[5] {
+ \begin{figure}[tbph]
+	 \centering
+	 \includegraphics[#3]{#1}
+	 \caption[#4]{#5}
+	 \label{fig:#2}
+ \end{figure}
+}
+
+\title{The Traveling Tournament Problem}
+\subtitle{Exercise 1}
+\author{Angelika Ferstl
+\and Bernhard Mallinger (0707663)}
+%\subtitle{}
+\date{December 6, 2011}
+%\publishers{}
+
+%\usepackage{fancyhdr}
+%\setlength{\headrulewidth}{0.0pt}
+\pagestyle{plain}
+
+\definecolor{grey}{gray}{.35} % for grey commnts
+\lstset{language=java,%
+escapeinside={@}{@},
+extendedchars=false,%
+%inputencoding=utf8x,%
+basicstyle=\ttfamily\small,%
+commentstyle=\color{grey},%
+%keywordstyle=,% no bold tt in standard font
+%captionpos=b,
+tabsize=2,
+showstringspaces=false,
+breaklines=true,
+breakindent=0pt,
+numbers=left
+}
+
+% just for screen-display!
+%\usepackage{newcent}
+
+\begin{document}
+
+\maketitle
+
+\vfill
+\tableofcontents 
+\vfill
+
+\newpage
+
+\input{problem.tex}
+\input{greedy.tex}
+
+\input{metaheuristic.tex}
+
+
+\end{document}
