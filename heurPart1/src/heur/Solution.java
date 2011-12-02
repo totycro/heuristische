@@ -448,8 +448,7 @@ public class Solution {
 				//
 				if(Util.CHECK_REPEATERS && (round!=0)){
 					Game otherGame = getGameOfCityInRound(city, round-1);
-					if( (game.a==otherGame.a && game.b==otherGame.b) && (game.b==otherGame.a && game.a==otherGame.b)){
-						System.out.println("USED check repeat");
+					if( (game.a==otherGame.a && game.b==otherGame.b) || (game.b==otherGame.a && game.a==otherGame.b)){
 						return true;
 					}
 				}

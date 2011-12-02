@@ -14,8 +14,8 @@ public class proj1 {
 	 */
 	public static void main(String[] args) {
 		
-		if (args.length != 4) {
-			System.err.println("USAGE: <program> input { -g | -n1 | -n2 | -vnd | -grasp } ch cr");
+		if (args.length != 5) {
+			System.err.println("USAGE: <program> input { -g | -n1 | -n2 | -vnd | -grasp } ch cr param1");
 			System.err.println("\t-g: greedy construction");
 			System.err.println("\t-n1: neighborhood search 1");
 			System.err.println("\t-n2: neighborhood search 2");
@@ -23,6 +23,7 @@ public class proj1 {
 			System.err.println("\t-grasp: well, do grasp.");
 			System.err.println("\tch: max consecutive home");
 			System.err.println("\tcr: max consecutive road");
+			System.err.println("\tparam1");
 			System.exit(1);
 		}
 		// TODO: max consecutive home/abroad parameter
@@ -89,7 +90,8 @@ public class proj1 {
 			System.out.println("\nvnd solution: \n"+sol);
 		} else if (args[1].equals("-grasp")) {
 			GRASP grasp = new GRASP( (long) (42*1337 / Math.PI) );
-			sol = grasp.execute(problem, 1000);
+			int iterations = Integer.parseInt( args[4] );
+			sol = grasp.execute(problem, iterations);
 			System.out.println("\ngrasp solution: \n"+sol);
 		} else {
 			System.err.println("invalid param: " + args[1]);

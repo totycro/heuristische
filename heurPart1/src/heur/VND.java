@@ -25,10 +25,10 @@ public class VND {
 			int oldCost = sol.getCumulativeCost();
 			
 			if (i==0) {
-				nh.neighborhoodGames(1);
-			} else if (i==1) {
 				nh.neighborhoodRounds(1);
-			}
+			} else if (i==1) {
+				nh.neighborhoodGames(1);
+			} 
 			
 			if (sol.getCumulativeCost() < oldCost) {
 				log.warning("found better solution");
