@@ -4,9 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 public class Greedy {
@@ -19,7 +17,11 @@ public class Greedy {
 	private Problem problem;
 
 	public Greedy(Problem problem) {
+		this(problem, false);
+	}
+	public Greedy(Problem problem, boolean silenceLogger) {
 		this.problem = problem;
+		log.setLevel( Level.OFF );
 	}
 	
 	/**
@@ -27,12 +29,28 @@ public class Greedy {
 	 * @return a solution
 	 */
 	public Solution execute() {
-		// Set this seed here to the value you get from the last run of the test case
 		return execute(0);
 	}
 	public Solution execute(long seed) {
 		Random rand = new Random(seed);
+		// rng for rng seeds
 		
+		for (int i=0;;i++) {
+			if (i%100 == 0) {
+				System.err.println("try: " + i);
+			}
+			long subSeed = rand.nextLong();
+			Solution sol = doExecute( subSeed );
+			if (sol != null) {
+				System.err.println("seed: "+ subSeed );
+				return sol;
+			}
+		}
+		
+	}
+		
+	private Solution doExecute(long seed) {
+		Random rand = new Random(seed);
 		Solution solution = new Solution( problem.getCitiesNum(), problem );
 		
 		HashSet<Integer> _cities = new HashSet<Integer>();
@@ -42,26 +60,21 @@ public class Greedy {
 		
 		for (int round=0; round<solution.getRoundsNum(); ++round) {
 			Set<Integer> curCities = (HashSet<Integer>) _cities.clone();
-			System.err.println("\nROUND: " + round);
+			log.warning("\nROUND: " + round);
 			
 			while (!curCities.isEmpty()) { // assign games until all cities are taken care of
 				// chose one
 				int which = rand.nextInt(curCities.size());
 				int cur = Util.choose(curCities, which);
-				System.err.println("choose: " + cur);
+				log.warning("choose: " + cur);
 				
 				// get all games
 				List<Solution.Game> games = solution.getPossibleGames(cur, round, problem.consecHome, problem.consecRoad);
-				System.err.println("found "+games.size()+" opponents");
+				log.warning("found "+games.size()+" opponents");
 				
 				if (games.isEmpty()) {
-					
-					System.err.println("Can't find an opponent for " + cur  + " in " + round );
-					if (seed == 0) { // first run
-						return repairSolution(solution);
-					} else {
-						return null;
-					}
+					log.severe("Can't find an opponent for " + cur  + " in " + round );
+					return null;
 				}
 				
 				// greedy: get closest city
@@ -101,6 +114,7 @@ public class Greedy {
 		return solution;
 	}
 
+	/*
 	private Solution repairSolution(Solution solution) {
 		// do a complete enumeration, starting with sol.
 		// if it fails, remove an item from the solution and try again.
@@ -118,6 +132,7 @@ public class Greedy {
 		
 		return null;
 	}
+	*/
 	
 
 }
