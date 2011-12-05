@@ -38,9 +38,6 @@ public class Greedy {
 		// rng for rng seeds
 		
 		for (int i=0;;i++) {
-			if (i%10000 == 0) {
-				System.err.println("try: " + i);
-			}
 			long subSeed = rand.nextLong();
 			Solution sol = doExecute( subSeed );
 			if (sol != null) {
@@ -48,7 +45,6 @@ public class Greedy {
 				return sol;
 			}
 		}
-		
 	}
 		
 	private Solution doExecute(long seed) {
@@ -115,26 +111,4 @@ public class Greedy {
 		
 		return solution;
 	}
-
-	/*
-	private Solution repairSolution(Solution solution) {
-		// do a complete enumeration, starting with sol.
-		// if it fails, remove an item from the solution and try again.
-		System.err.println("this should repair");
-		
-		assert (false);
-		for (int i=1; i<10000; i++) {
-			solution = execute(i);
-			if (solution != null) {
-				System.err.println("\nThis seed worked: " + i);
-				return solution;
-			}
-			
-		}
-		
-		return null;
-	}
-	*/
-	
-
 }

@@ -1,0 +1,17 @@
+A  B  C  D  E  F  G  H  
+-  -  -  -  -  -  -  -  
+@D @H G  A  F  @E @C B  
+@H @E D  @C B  G  @F A  
+B  @A @F @E D  C  H  @G 
+D  E  @G @A @B @H C  F  
+F  C  @B E  @D @A @H G  
+@C D  A  @B @H @G F  E  
+@F @C B  H  G  A  @E @D 
+G  @D @E B  C  H  @A @F 
+E  @G F  @H @A @C B  D  
+C  F  @A @G H  @B D  @E 
+@E G  @H @F A  D  @B C  
+H  @F E  G  @C B  @D @A 
+@G H  @D C  @F E  A  @B 
+@B A  H  F  @G @D E  @C 
+
