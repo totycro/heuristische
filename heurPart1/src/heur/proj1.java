@@ -68,7 +68,8 @@ public class proj1 {
 				Util.protocol += "all costs: " +  sol.getCumulativeCost() +"\n";
 			}
 			Neighborhood n1 = new Neighborhood(sol);
-			n1.neighborhoodRounds(neigh,2,sol.getRoundsNum());
+			//n1.neighborhoodRounds(neigh,2,sol.getRoundsNum());
+			n1.neighborhoodRounds(neigh,0,4);
 			System.err.println("\n1: \n"+sol);
 			if(Util.protocolBoolean){
 				Util.protocol += "\n1: \n"+sol;
@@ -85,7 +86,7 @@ public class proj1 {
 			}
 			//
 			Neighborhood n2 = new Neighborhood(sol);
-			n2.neighborhoodGames(neigh,1,4);
+			n2.neighborhoodGames(neigh,5,6);
 			if(Util.protocolBoolean){
 				Util.protocol += "\n2: \n"+sol;
 			}

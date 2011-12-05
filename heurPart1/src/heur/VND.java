@@ -25,9 +25,10 @@ public class VND {
 			int oldCost = sol.getCumulativeCost();
 			
 			if (i==0) {
-				nh.neighborhoodRounds(1,2,sol.getRoundsNum());
+				nh.neighborhoodRounds(2,2,sol.getRoundsNum());
 			} else if (i==1) {
-				nh.neighborhoodGames(1,0,4);
+				nh.neighborhoodGames(2,1,3);
+				//nh.neighborhoodGames(1,5,6);
 			} 
 			
 			if (sol.getCumulativeCost() < oldCost) {

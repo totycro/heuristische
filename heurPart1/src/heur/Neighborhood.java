@@ -627,13 +627,58 @@ public class Neighborhood {
 			sol.setSolution(oldSolution);
 		}
 		else{
-			System.out.println("Improvement: round "+roundCnt+": "+costs);
+			System.out.println("Improvement: round move "+roundCnt+": "+costs);
 		}
 		//
 		roundCnt = roundCnt-1;
 		}
 	}
 	
+	private void threeRoundsChange(int a, int b, int c, int d){
+		//
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		list.add(a);
+		list.add(b);
+		list.add(c);
+		list.add(d);
+		searchPossibleRoundImprovements(list);
+		//
+		ArrayList<Integer> list2 = new ArrayList<Integer>();
+		list2.add(a);
+		list2.add(c);
+		list2.add(b);
+		list2.add(d);
+		searchPossibleRoundImprovements(list2);
+		//
+		ArrayList<Integer> list3 = new ArrayList<Integer>();
+		list3.add(a);
+		list3.add(c);
+		list3.add(d);
+		list3.add(b);
+		searchPossibleRoundImprovements(list3);
+		//
+		ArrayList<Integer> list4 = new ArrayList<Integer>();
+		list4.add(a);
+		list4.add(d);
+		list4.add(b);
+		list4.add(c);
+		searchPossibleRoundImprovements(list4);
+		//
+		ArrayList<Integer> list5 = new ArrayList<Integer>();
+		list5.add(a);
+		list5.add(d);
+		list5.add(c);
+		list5.add(b);
+		searchPossibleRoundImprovements(list5);
+		//
+		ArrayList<Integer> list6 = new ArrayList<Integer>();
+		list6.add(a);
+		list6.add(b);
+		list6.add(d);
+		list6.add(c);
+		searchPossibleRoundImprovements(list6);
+		//
+	}
 	private void searchPossibleRoundImprovements(ArrayList<Integer> list){
 		//
 		int costsOrg = sol.getCumulativeCost();
@@ -666,11 +711,6 @@ public class Neighborhood {
 		//
 		change = change+": "+costs;
 		//
-		/*
-		if(!badConstraint){
-			System.out.println(costs);
-		}
-		*/
 		if(orgSolutionFalse && !badConstraint){
 			System.out.println("repair .... NEW SOLUTION (round exchange): "+costs);
 			System.out.println(sol);
@@ -684,7 +724,7 @@ public class Neighborhood {
 			sol.setSolution(oldSolution);
 		}
 		else{
-			System.out.println(costs);
+			//System.out.println("possible "+costs);
 			solPossible.add(sol.deepCopy());
 			solPossibleChoice.add(change);
 			sol.setSolution(oldSolution);
@@ -712,11 +752,43 @@ public class Neighborhood {
 				for(int idx=0; idx<cntRound; idx++){
 					for(int idx1=idx+1; idx1<cntRound; idx1++){
 						for(int idx2=idx1+1; idx2<cntRound; idx2++){
+							//
 							ArrayList<Integer> list = new ArrayList<Integer>();
 							list.add(idx);
 							list.add(idx1);
 							list.add(idx2);
 							searchPossibleRoundImprovements(list);
+							//
+							ArrayList<Integer> list2 = new ArrayList<Integer>();
+							list2.add(idx2);
+							list2.add(idx);
+							list2.add(idx1);
+							searchPossibleRoundImprovements(list2);
+							//
+							ArrayList<Integer> list3 = new ArrayList<Integer>();
+							list3.add(idx1);
+							list3.add(idx2);
+							list3.add(idx);
+							searchPossibleRoundImprovements(list3);
+							//
+							ArrayList<Integer> list4 = new ArrayList<Integer>();
+							list4.add(idx);
+							list4.add(idx2);
+							list4.add(idx1);
+							searchPossibleRoundImprovements(list4);
+							//
+							ArrayList<Integer> list5 = new ArrayList<Integer>();
+							list5.add(idx2);
+							list5.add(idx1);
+							list5.add(idx);
+							searchPossibleRoundImprovements(list5);
+							//
+							ArrayList<Integer> list6 = new ArrayList<Integer>();
+							list6.add(idx1);
+							list6.add(idx);
+							list6.add(idx2);
+							searchPossibleRoundImprovements(list6);
+							//
 				}	}	}
 			}
 			else if(cntChange==3){
@@ -724,394 +796,19 @@ public class Neighborhood {
 					for(int idx1=idx+1; idx1<cntRound; idx1++){
 						for(int idx2=idx1+1; idx2<cntRound; idx2++){
 							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								ArrayList<Integer> list = new ArrayList<Integer>();
-								list.add(idx);
-								list.add(idx1);
-								list.add(idx2);
-								list.add(idx3);
-								searchPossibleRoundImprovements(list);
+								//
+								threeRoundsChange(idx, idx1, idx2, idx3);
+								threeRoundsChange(idx1, idx, idx2, idx3);
+								threeRoundsChange(idx2, idx1, idx, idx3);
+								threeRoundsChange(idx3, idx1, idx2, idx);
+								//
 				}	}	}	}
 			}
-			else if(cntChange==4){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									ArrayList<Integer> list = new ArrayList<Integer>();
-									list.add(idx);
-									list.add(idx1);
-									list.add(idx2);
-									list.add(idx3);
-									list.add(idx4);
-									searchPossibleRoundImprovements(list);
-				}	}	}	}	}
+			else{
+				for(int idx=0; idx<sol.getRoundsNum(); idx++){
+					moveListIdx(idx);
+				}
 			}
-			else if(cntChange==5){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										ArrayList<Integer> list = new ArrayList<Integer>();
-										list.add(idx);
-										list.add(idx1);
-										list.add(idx2);
-										list.add(idx3);
-										list.add(idx4);
-										list.add(idx5);
-										searchPossibleRoundImprovements(list);
-				}	}	}	}	}	}
-			}
-			else if(cntChange==6){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											ArrayList<Integer> list = new ArrayList<Integer>();
-											list.add(idx);
-											list.add(idx1);
-											list.add(idx2);
-											list.add(idx3);
-											list.add(idx4);
-											list.add(idx5);
-											list.add(idx6);
-											searchPossibleRoundImprovements(list);
-			}}}}}}}}
-			else if(cntChange==7){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											for(int idx7=idx6+1; idx7<cntRound; idx7++){
-												ArrayList<Integer> list = new ArrayList<Integer>();
-												list.add(idx);
-												list.add(idx1);
-												list.add(idx2);
-												list.add(idx3);
-												list.add(idx4);
-												list.add(idx5);
-												list.add(idx6);
-												list.add(idx7);
-												searchPossibleRoundImprovements(list);
-			}}}}}}}}}
-			else if(cntChange==8){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											for(int idx7=idx6+1; idx7<cntRound; idx7++){
-												for(int idx8=idx7+1; idx8<cntRound; idx8++){
-													ArrayList<Integer> list = new ArrayList<Integer>();
-													list.add(idx);
-													list.add(idx1);
-													list.add(idx2);
-													list.add(idx3);
-													list.add(idx4);
-													list.add(idx5);
-													list.add(idx6);
-													list.add(idx7);
-													list.add(idx8);
-													searchPossibleRoundImprovements(list);
-			}}}}}}}}}}
-			else if(cntChange==9){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											for(int idx7=idx6+1; idx7<cntRound; idx7++){
-												for(int idx8=idx7+1; idx8<cntRound; idx8++){
-													for(int idx9=idx8+1; idx9<cntRound; idx9++){
-														ArrayList<Integer> list = new ArrayList<Integer>();
-														list.add(idx);
-														list.add(idx1);
-														list.add(idx2);
-														list.add(idx3);
-														list.add(idx4);
-														list.add(idx5);
-														list.add(idx6);
-														list.add(idx7);
-														list.add(idx8);
-														list.add(idx9);
-														searchPossibleRoundImprovements(list);
-			}}}}}}}}}}}
-			else if(cntChange==10){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											for(int idx7=idx6+1; idx7<cntRound; idx7++){
-												for(int idx8=idx7+1; idx8<cntRound; idx8++){
-													for(int idx9=idx8+1; idx9<cntRound; idx9++){
-														for(int idx10=idx9+1; idx10<cntRound; idx10++){
-																ArrayList<Integer> list = new ArrayList<Integer>();
-																list.add(idx);
-																list.add(idx1);
-																list.add(idx2);
-																list.add(idx3);
-																list.add(idx4);
-																list.add(idx5);
-																list.add(idx6);
-																list.add(idx7);
-																list.add(idx8);
-																list.add(idx9);
-																list.add(idx10);
-																searchPossibleRoundImprovements(list);
-			}}}}}}}}}}}}
-			else if(cntChange==11){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											for(int idx7=idx6+1; idx7<cntRound; idx7++){
-												for(int idx8=idx7+1; idx8<cntRound; idx8++){
-													for(int idx9=idx8+1; idx9<cntRound; idx9++){
-														for(int idx10=idx9+1; idx10<cntRound; idx10++){
-															for(int idx11=idx10+1; idx11<cntRound; idx11++){
-																		ArrayList<Integer> list = new ArrayList<Integer>();
-																		list.add(idx);
-																		list.add(idx1);
-																		list.add(idx2);
-																		list.add(idx3);
-																		list.add(idx4);
-																		list.add(idx5);
-																		list.add(idx6);
-																		list.add(idx7);
-																		list.add(idx8);
-																		list.add(idx9);
-																		list.add(idx10);
-																		list.add(idx11);
-																		searchPossibleRoundImprovements(list);
-			}}}}}}}}}}}}}
-			else if(cntChange==12){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											for(int idx7=idx6+1; idx7<cntRound; idx7++){
-												for(int idx8=idx7+1; idx8<cntRound; idx8++){
-													for(int idx9=idx8+1; idx9<cntRound; idx9++){
-														for(int idx10=idx9+1; idx10<cntRound; idx10++){
-															for(int idx11=idx10+1; idx11<cntRound; idx11++){
-																for(int idx12=idx11+1; idx12<cntRound; idx12++){
-																		ArrayList<Integer> list = new ArrayList<Integer>();
-																		list.add(idx);
-																		list.add(idx1);
-																		list.add(idx2);
-																		list.add(idx3);
-																		list.add(idx4);
-																		list.add(idx5);
-																		list.add(idx6);
-																		list.add(idx7);
-																		list.add(idx8);
-																		list.add(idx9);
-																		list.add(idx10);
-																		list.add(idx11);
-																		list.add(idx12);
-																		searchPossibleRoundImprovements(list);
-			}}}}}}}}}}}}}}
-			else if(cntChange==13){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											for(int idx7=idx6+1; idx7<cntRound; idx7++){
-												for(int idx8=idx7+1; idx8<cntRound; idx8++){
-													for(int idx9=idx8+1; idx9<cntRound; idx9++){
-														for(int idx10=idx9+1; idx10<cntRound; idx10++){
-															for(int idx11=idx10+1; idx11<cntRound; idx11++){
-																for(int idx12=idx11+1; idx12<cntRound; idx12++){
-																	for(int idx13=idx12+1; idx13<cntRound; idx13++){
-																		ArrayList<Integer> list = new ArrayList<Integer>();
-																		list.add(idx);
-																		list.add(idx1);
-																		list.add(idx2);
-																		list.add(idx3);
-																		list.add(idx4);
-																		list.add(idx5);
-																		list.add(idx6);
-																		list.add(idx7);
-																		list.add(idx8);
-																		list.add(idx9);
-																		list.add(idx10);
-																		list.add(idx11);
-																		list.add(idx12);
-																		list.add(idx13);
-																		searchPossibleRoundImprovements(list);
-			}}}}}}}}}}}}}}}
-			else if(cntChange==14){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											for(int idx7=idx6+1; idx7<cntRound; idx7++){
-												for(int idx8=idx7+1; idx8<cntRound; idx8++){
-													for(int idx9=idx8+1; idx9<cntRound; idx9++){
-														for(int idx10=idx9+1; idx10<cntRound; idx10++){
-															for(int idx11=idx10+1; idx11<cntRound; idx11++){
-																for(int idx12=idx11+1; idx12<cntRound; idx12++){
-																	for(int idx13=idx12+1; idx13<cntRound; idx13++){
-																		for(int idx14=idx13+1; idx14<cntRound; idx14++){
-																		ArrayList<Integer> list = new ArrayList<Integer>();
-																		list.add(idx);
-																		list.add(idx1);
-																		list.add(idx2);
-																		list.add(idx3);
-																		list.add(idx4);
-																		list.add(idx5);
-																		list.add(idx6);
-																		list.add(idx7);
-																		list.add(idx8);
-																		list.add(idx9);
-																		list.add(idx10);
-																		list.add(idx11);
-																		list.add(idx12);
-																		list.add(idx13);
-																		list.add(idx14);
-																		searchPossibleRoundImprovements(list);
-			}}}}}}}}}}}}}}}}
-			else if(cntChange==15){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											for(int idx7=idx6+1; idx7<cntRound; idx7++){
-												for(int idx8=idx7+1; idx8<cntRound; idx8++){
-													for(int idx9=idx8+1; idx9<cntRound; idx9++){
-														for(int idx10=idx9+1; idx10<cntRound; idx10++){
-															for(int idx11=idx10+1; idx11<cntRound; idx11++){
-																for(int idx12=idx11+1; idx12<cntRound; idx12++){
-																	for(int idx13=idx12+1; idx13<cntRound; idx13++){
-																		for(int idx14=idx13+1; idx14<cntRound; idx14++){
-																			for(int idx15=idx14+1; idx15<cntRound; idx15++){
-																		ArrayList<Integer> list = new ArrayList<Integer>();
-																		list.add(idx);
-																		list.add(idx1);
-																		list.add(idx2);
-																		list.add(idx3);
-																		list.add(idx4);
-																		list.add(idx5);
-																		list.add(idx6);
-																		list.add(idx7);
-																		list.add(idx8);
-																		list.add(idx9);
-																		list.add(idx10);
-																		list.add(idx11);
-																		list.add(idx12);
-																		list.add(idx13);
-																		list.add(idx14);
-																		list.add(idx15);
-																		searchPossibleRoundImprovements(list);
-			}}}}}}}}}}}}}}}}}
-			else if(cntChange==16){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											for(int idx7=idx6+1; idx7<cntRound; idx7++){
-												for(int idx8=idx7+1; idx8<cntRound; idx8++){
-													for(int idx9=idx8+1; idx9<cntRound; idx9++){
-														for(int idx10=idx9+1; idx10<cntRound; idx10++){
-															for(int idx11=idx10+1; idx11<cntRound; idx11++){
-																for(int idx12=idx11+1; idx12<cntRound; idx12++){
-																	for(int idx13=idx12+1; idx13<cntRound; idx13++){
-																		for(int idx14=idx13+1; idx14<cntRound; idx14++){
-																			for(int idx15=idx14+1; idx15<cntRound; idx15++){
-																				for(int idx16=idx15+1; idx16<cntRound; idx16++){
-																		ArrayList<Integer> list = new ArrayList<Integer>();
-																		list.add(idx);
-																		list.add(idx1);
-																		list.add(idx2);
-																		list.add(idx3);
-																		list.add(idx4);
-																		list.add(idx5);
-																		list.add(idx6);
-																		list.add(idx7);
-																		list.add(idx8);
-																		list.add(idx9);
-																		list.add(idx10);
-																		list.add(idx11);
-																		list.add(idx12);
-																		list.add(idx13);
-																		list.add(idx14);
-																		list.add(idx15);
-																		list.add(idx16);
-																		searchPossibleRoundImprovements(list);
-			}}}}}}}}}}}}}}}}}}
-			else if(cntChange==17){
-				for(int idx=0; idx<cntRound; idx++){
-					for(int idx1=idx+1; idx1<cntRound; idx1++){
-						for(int idx2=idx1+1; idx2<cntRound; idx2++){
-							for(int idx3=idx2+1; idx3<cntRound; idx3++){
-								for(int idx4=idx3+1; idx4<cntRound; idx4++){
-									for(int idx5=idx4+1; idx5<cntRound; idx5++){
-										for(int idx6=idx5+1; idx6<cntRound; idx6++){
-											for(int idx7=idx6+1; idx7<cntRound; idx7++){
-												for(int idx8=idx7+1; idx8<cntRound; idx8++){
-													for(int idx9=idx8+1; idx9<cntRound; idx9++){
-														for(int idx10=idx9+1; idx10<cntRound; idx10++){
-															for(int idx11=idx10+1; idx11<cntRound; idx11++){
-																for(int idx12=idx11+1; idx12<cntRound; idx12++){
-																	for(int idx13=idx12+1; idx13<cntRound; idx13++){
-																		for(int idx14=idx13+1; idx14<cntRound; idx14++){
-																			for(int idx15=idx14+1; idx15<cntRound; idx15++){
-																				for(int idx16=idx15+1; idx16<cntRound; idx16++){
-																					for(int idx17=idx16+1; idx17<cntRound; idx17++){
-																		ArrayList<Integer> list = new ArrayList<Integer>();
-																		list.add(idx);
-																		list.add(idx1);
-																		list.add(idx2);
-																		list.add(idx3);
-																		list.add(idx4);
-																		list.add(idx5);
-																		list.add(idx6);
-																		list.add(idx7);
-																		list.add(idx8);
-																		list.add(idx9);
-																		list.add(idx10);
-																		list.add(idx11);
-																		list.add(idx12);
-																		list.add(idx13);
-																		list.add(idx14);
-																		list.add(idx15);
-																		list.add(idx16);
-																		list.add(idx17);
-																		searchPossibleRoundImprovements(list);
-			}}}}}}}}}}}}}}}}}}}
 			improvement = setBestImprovement();
 		}
 	}
@@ -1332,6 +1029,7 @@ public class Neighborhood {
 			}
 		}
 		else if(neighChoice==1){//next improvement: search in a specified order, take first solution, which is better than x
+			
 			for(int neighCnt=from; neighCnt<to; neighCnt++){
 				listNeighborhoodRound(neighCnt,minNotMax);
 			}
