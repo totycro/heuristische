@@ -36,12 +36,21 @@ public class GRASP {
 			log.warning("new solution cost: " + sol.getCumulativeCost());
 			int newCosts = sol.getCumulativeCost() ;
 			System.err.println("new solution cost: " + newCosts);
+			if(Util.protocolBoolean){
+				Util.protocol += "new solution cost: " + newCosts+"\n";
+			}
 			if (newCosts < oldCost) {
 				oldCost = newCosts;
 				System.err.println("is new min");
+				if(Util.protocolBoolean){
+					Util.protocol += "is new min"+"\n";
+				}
 				bestSol = sol;
 			} else {
 				System.err.println("is worse, cur min: "+oldCost);
+				if(Util.protocolBoolean){
+					Util.protocol += "is worse, cur min: "+oldCost+"\n";
+				}
 			}
 		}
 		

@@ -10,7 +10,8 @@ import java.util.logging.Logger;
 public class Util {
 	
 	public static boolean CHECK_REPEATERS = true;
-	
+	public static String protocol = "";
+	public static boolean protocolBoolean = true;
 	/**
 	 * Picks an arbitrary element from the set, removes it and returns it.
 	 */

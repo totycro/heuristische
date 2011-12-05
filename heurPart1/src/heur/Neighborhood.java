@@ -3,11 +3,8 @@ package heur;
 import heur.Solution.Game;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class Neighborhood {
@@ -16,6 +13,9 @@ public class Neighborhood {
 	private boolean orgSolutionFalse;
 	private ArrayList<List<List<Game>>> solPossible = new ArrayList<List<List<Game>>>();
 	private ArrayList<String> solPossibleChoice = new ArrayList<String>();
+	private boolean improvement;
+	private int iterationStep;
+	private boolean minNotMax = false;
 	
 	public Neighborhood(Solution solution){
 		this.sol = solution;
@@ -24,15 +24,17 @@ public class Neighborhood {
 	/*
 	 * RANDOM
 	 */
-	private void randomNeighborhoodRounds(int cntChange, int repeats){
-		System.out.println("Round-Change: "+cntChange);
-		int cntRound = sol.getRoundsNum();
+	private void randomNeighborhoodRounds(int cntChange, int times){
+		String text = (cntChange+" round exchanges, "+times+" tries");
+		System.out.println(text);
+		if(Util.protocolBoolean){
+			Util.protocol += text+"\n";
+		}
 		//
-		for(int j=0; j<repeats; j++){
-			for(int idx=0; idx<cntRound; idx++){
-				ArrayList<Integer> list = getRandomListWithoutRepeats(cntRound);
-				searchRoundImprovement(list);
-			}
+		int maxValue = sol.getRoundsNum();
+		for(int j=0; j<times; j++){
+			ArrayList<Integer> list = getRandomListWithoutRepeats(maxValue, cntChange);
+			searchRoundImprovement(list);
 		}
 	}
 	
@@ -44,35 +46,31 @@ public class Neighborhood {
 				idxList.add(rand.nextInt(n));
 			}
 			checkSolution(idxList, listOfGames);
+			idxList.clear();
 		}
 	}
 	
-	private ArrayList<Integer> getRandomListWithoutRepeats(int n){
+	private ArrayList<Integer> getRandomListWithoutRepeats(int valueMax, int sMax){
 		ArrayList<Integer> randomList = new ArrayList<Integer>();
+		ArrayList<Integer> cutList = new ArrayList<Integer>();
 		Random rand = new Random();
-		for(int i=0; i<n; i++){
+		for(int i=0; i<valueMax; i++){
 			randomList.add(i);
 		}
-		for(int j=0; j<n; j++){
-			int tempIdx = rand.nextInt(n);
+		for(int j=0; j<valueMax; j++){
+			int tempIdx = rand.nextInt(valueMax);
 			//
 			int temp = randomList.get(tempIdx);
 			int temp2 = randomList.get(j);
 			//
 			randomList.set(tempIdx,temp2);
 			randomList.set(      j,temp);
+			//
 		}
-		return randomList;
-	}
-	
-	//get random list for random neighborhood
-	private ArrayList<Integer> getRandomList(int n){
-		ArrayList<Integer> randomList = new ArrayList<Integer>();
-		Random rand = new Random();
-		for(int i=0; i<n; i++){
-			randomList.add(rand.nextInt(n));
+		for(int s=0; s<sMax; s++){
+			cutList.add(randomList.get(s));
 		}
-		return randomList;
+		return cutList;
 	}
 	
 	/*
@@ -92,54 +90,6 @@ public class Neighborhood {
 		return " ("+game2+","+otherGame2+") ";
 	}
 	//
-	/*
-	private List<Integer> getSortedList(List<ArrayList<Integer>> copyListOfGames, boolean minNotMax){
-		//
-		int costCnt = copyListOfGames.get(0).size();
-		System.out.println(costCnt);
-		//
-		ArrayList<Integer> listIdx = new ArrayList<Integer>();
-		while(!copyListOfGames.isEmpty()){
-			int minIdx = -1;
-			if(minNotMax){ //0 -> 1 -> 2
-				int minCost = Integer.MAX_VALUE;
-				for(int i=0; i<copyListOfGames.size(); i++){
-					int curCosts;
-					if(costCnt==5){
-						curCosts = copyListOfGames.get(i).get(3)+copyListOfGames.get(i).get(4);
-					}
-					else{
-						curCosts = copyListOfGames.get(i).get(3);
-					}
-					if(minCost>=curCosts){
-						minIdx = i;
-						minCost = curCosts;
-					}
-				}
-			}
-			else{ //2 -> 1 -> 0
-				int minCost = Integer.MIN_VALUE;
-				for(int i=0; i<copyListOfGames.size(); i++){
-					int curCosts;
-					if(costCnt==5){
-						curCosts = copyListOfGames.get(i).get(3)+copyListOfGames.get(i).get(4);
-					}
-					else{
-						curCosts = copyListOfGames.get(i).get(3);
-					}
-					if(minCost<=curCosts){
-						minIdx = i;
-						minCost = curCosts;
-					}
-				}
-			}
-			listIdx.add(minIdx);
-			copyListOfGames.remove(minIdx);
-		}
-		return listIdx;
-	}
-	//
-	 * */
 	private List<Integer> getSortedList(List<ArrayList<Integer>> copyListOfGames, boolean minNotMax){
 		//
 		ArrayList<Integer> valuesList = new ArrayList<Integer>();
@@ -171,6 +121,8 @@ public class Neighborhood {
 			Collections.reverse(roundListClone);
 		}
 		//
+		//System.out.println(roundListClone.toString());
+		//
 		ArrayList<Integer> listIdx = new ArrayList<Integer>();
 		for(int j=0; j<roundListClone.size(); j++){
 			int idx = roundListClone2.indexOf(roundListClone.get(j));
@@ -184,7 +136,9 @@ public class Neighborhood {
 		String change = "Improve Games: ";
 		int costsOrg = sol.getCumulativeCost();
 		List<List<Game>> oldSolution = sol.deepCopy();
-		
+		//
+		iterationStep++;
+		//
 		for(int s=0; s<idxList.size(); s++){
 			int a = idxList.get(s);
 			change += changeGames(a, listOfGames);
@@ -196,32 +150,51 @@ public class Neighborhood {
 			System.out.println("repair .... NEW SOLUTION (games exchange): "+costs);
 			System.out.println(sol);
 			orgSolutionFalse = (sol.checkConstraint());
+			if(Util.protocolBoolean){
+				Util.protocol += "repair .... NEW SOLUTION (games exchange): "+costs+"\n";
+				Util.protocol += sol+"\n";
+			}
 		}
 		else if((costsOrg<=costs) || badConstraint){
 			sol.setSolution(oldSolution);
 		}
 		else{
 			System.out.println(change+": "+costs);
+			improvement = true;
+			if(Util.protocolBoolean){
+				Util.protocol += change+": "+costs+"\n";
+			}
 		}
 	}
 	//
 	private void listNeighborhoodRound(int changeCnt, boolean minNotMax) {
 		//ArrayList<Integer> roundList = sol.getRoundListWithCnt();
 		ArrayList<Integer> roundList = sol.getCumulativeCostOfRound();
-		//ArrayList<Integer> roundList = sol.getRoundListWithCnt();
 		ArrayList<Integer> list = getSortedListRounds(roundList, minNotMax);
 		//
-		int sBeginning = 0;
-		int sEnding = 1;
+		int sBeginning;
+		int sEnding;
+		if(!minNotMax){
+			sBeginning = 0;
+			sEnding = 1;
+		}
+		else{
+			sBeginning = 1;
+			sEnding = 0;
+		}
 		//
-		for(int round=0; round<list.size(); round++){
+		improvement = true;
+		//
+		while(improvement){
+			//
+			improvement = false;
+			//
+			for(int round=0; round<list.size(); round++){
 			//
 			int sIdx = list.get(round);
 			ArrayList<Integer> sortedListToRound1 = sol.getCumulativeCostOfAllRound( sIdx );
 			ArrayList<Integer> sortedListToRound = getSortedListRounds(sortedListToRound1, minNotMax);
 			//
-			//System.out.println(sIdx);
-			//System.out.println(sortedListToRound.toString());
 			int sList = sortedListToRound.size()-sEnding;
 			//
 			if(changeCnt==1){
@@ -284,7 +257,7 @@ public class Neighborhood {
 								searchRoundImprovement(indList);
 				}}}}}
 			}
-			
+		}
 		}
 	}
 	/*	 * neighborhood games 	 */
@@ -297,7 +270,12 @@ public class Neighborhood {
 		}
 		//
 		List<Integer> listIdx = getSortedList(copyListOfGames, minNotMax);
+		//
+		improvement = true;
 		//List<Integer> listIdx = getRandomList(copyListOfGames.size());
+		while(improvement){
+		//
+		improvement = false;
 		//
 		if(changeCnt==1){
 			for(int idxL=0; idxL<listIdx.size(); idxL++){
@@ -369,6 +347,7 @@ public class Neighborhood {
 									idxList.add(listIdx.get(idx4));
 									checkSolution(idxList, listOfGames);
 			}}}}}}
+		}
 	}
 	}
 	
@@ -380,6 +359,8 @@ public class Neighborhood {
 		int costsOrg = sol.getCumulativeCost();
 		List<List<Game>> oldSolution = sol.deepCopy();
 		String change = "";
+		//
+		iterationStep++;
 		//
 		for(int ind=0; ind<idxList.size(); ind++){
 				ArrayList<Integer> gamesIdx = list.get(idxList.get(ind));
@@ -404,6 +385,10 @@ public class Neighborhood {
 			System.out.println("repair .... NEW SOLUTION (games exchange): "+costs);
 			System.out.println(sol);
 			orgSolutionFalse = (sol.checkConstraint());
+			if(Util.protocolBoolean){
+				Util.protocol += "repair .... NEW SOLUTION (games exchange): "+costs+"\n";
+				Util.protocol += sol+"\n";
+			}
 		}
 		else if((costsOrg<=costs) || badConstraint){
 			sol.setSolution(oldSolution);
@@ -434,7 +419,9 @@ public class Neighborhood {
 			}
 			sol.setSolution(solPossible.get(minIdx));
 			System.out.println(solPossibleChoice.get(minIdx));
-			System.out.println(solPossible.size());
+			if(Util.protocolBoolean){
+				Util.protocol += solPossibleChoice.get(minIdx)+"\n";
+			}
 			solPossibleChoice.clear();
 			solPossible.clear();
 		}
@@ -655,6 +642,8 @@ public class Neighborhood {
 		List<Integer> idxRounds = new ArrayList<Integer>();
 		String change = "Rounds: ";
 		//
+		iterationStep++;
+		//
 		for(int ind=0; ind<list.size(); ind++){
 			int idx = list.get(ind);
 			List<Game> round = sol.getRound(idx);
@@ -686,6 +675,10 @@ public class Neighborhood {
 			System.out.println("repair .... NEW SOLUTION (round exchange): "+costs);
 			System.out.println(sol);
 			orgSolutionFalse = (sol.checkConstraint());
+			if(Util.protocolBoolean){
+				Util.protocol += "repair .... NEW SOLUTION (games exchange): "+costs+"\n";
+				Util.protocol += sol+"\n";
+			}
 		}
 		else if((costsOrg<=costs) || badConstraint){
 			sol.setSolution(oldSolution);
@@ -1125,6 +1118,8 @@ public class Neighborhood {
 
 	private void searchRoundImprovement(ArrayList<Integer> list){
 		//
+		iterationStep++;
+		//
 		int costsOrg = sol.getCumulativeCost();
 		List<List<Game>> oldSolution = sol.deepCopy();
 		List<List<Game>> listRounds = new ArrayList<List<Game>>();
@@ -1155,17 +1150,163 @@ public class Neighborhood {
 			System.out.println("repair .... NEW SOLUTION (round exchange): "+costs);
 			System.out.println(sol);
 			orgSolutionFalse = (sol.checkConstraint());
+			if(Util.protocolBoolean){
+				Util.protocol += "repair .... NEW SOLUTION (games exchange): "+costs+"\n";
+				Util.protocol += sol+"\n";
+			}
 		}
 		else if((costsOrg<=costs) || badConstraint){
 			sol.setSolution(oldSolution);
 		}
 		else{
 			System.out.println("Improvement "+change+": "+costs);
-			//System.out.println(sol);
+			improvement = true;
+			if(Util.protocolBoolean){
+				Util.protocol += "Improvement "+change+": "+costs+"\n";
+			}
 		}
 	}
 	
+	private void getStatistic(ArrayList<Integer> al){
+		int average = 0;
+		for(int i=0; i<al.size(); i++){
+			average += al.get(i);
+		}
+		average = average/al.size();
+		int std = 0;
+		for(int i=0; i<al.size(); i++){
+			int temp = (average-al.get(i))*(average-al.get(i));
+			std += temp;
+		}
+		double var = Math.sqrt( std/(al.size()-1) );
+		//
+		System.out.println(average);
+		System.out.println(var);
+	}
 	
+	public void neighborhoodRoundsTests(int neighChoice){	
+		//
+		orgSolutionFalse = sol.checkConstraint();
+		//
+		if(neighChoice==0){ //random neighbor
+			int neigh = sol.getRoundsNum();
+			int times = 100;
+			//for(int i=2; i<neigh; i++){
+				//System.out.println(i);
+			ArrayList<Integer> al = new ArrayList<Integer>();
+			for(int i=0; i<100; i++){
+				List<List<Game>> oldSolution = sol.deepCopy();
+				randomNeighborhoodRounds(6, times);
+				al.add(sol.getCumulativeCost());
+				sol.setSolution(oldSolution);
+			}
+			getStatistic(al);
+			//}
+			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost());
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+"\n";
+			}
+		}
+		else if(neighChoice==1){//next improvement: search in a specified order, take first solution, which is better than x
+			for(int i=0; i<sol.getRoundsNum(); i++){
+				listNeighborhoodRound(i,minNotMax);
+			}
+			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+", Iterationsteps: "+iterationStep);
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+", Iterationsteps: "+iterationStep+"\n";
+			}
+		}
+		else if(neighChoice==2){//best improvement: search through N completely and take the best solution
+			//
+			int cntChanges = 6;
+			for(int i=0; i<cntChanges; i++){
+				bestNeighborhoodRounds(i);
+			}
+			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+", Iterationsteps: "+iterationStep);
+			
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+", Iterationsteps: "+iterationStep+"\n";
+			}
+			/*
+			for(int i=0; i<sol.getRoundsNum(); i++){
+				moveListIdx(i);
+			}
+			
+			for(int i=0; i<sol.getRoundsNum(); i++){
+				//for(int i=sol.getRoundsNum(); i>0; i--){
+					//moveListIdx(i);
+					bestNeighborhoodRounds(1);
+					List<ArrayList<Integer>> listOfGames = sol.getGameList();
+					bestNeighborhoodGame(listOfGames,5);
+				}*/
+		}
+		//
+		
+		//
+	}
+	
+	public void neighborhoodGamesTests(int neighChoice){
+		//
+		orgSolutionFalse = sol.checkConstraint();
+		//
+		List<ArrayList<Integer>> listOfGames = sol.getGameList();
+		if(neighChoice==0){ //random neighbor
+			//ArrayList<Integer> sortList = getRandomListWithoutRepeats(listOfGames.size());
+			//ArrayList<Integer> sortList = getRandomList(listOfGames.size());
+			//listNeighborhoodGame(listOfGames, sortList);
+			//listNeighborhoodGameRandom(List<ArrayList<Integer>> listOfGames, int n, int changeCnt, int sRandom)
+			/*
+			for(int i=0; i<5; i++){
+				listNeighborhoodGameRandom(listOfGames, listOfGames.size(), i, 15000);
+			}
+			*/
+			//
+			int times = 100;
+			ArrayList<Integer> al = new ArrayList<Integer>();
+			for(int i=0; i<100; i++){
+				List<List<Game>> oldSolution = sol.deepCopy();
+				for(int j=1; j<4; j++){
+					listNeighborhoodGameRandom(listOfGames, listOfGames.size(), j, 1000);
+				}
+				al.add(sol.getCumulativeCost());
+				sol.setSolution(oldSolution);
+			}
+			getStatistic(al);
+			
+			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep);
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep+"\n";
+			}
+		}
+		else if(neighChoice==1){//next improvement: search in a specified order, take first solution, which is better than x
+			List<List<Game>> oldSolution = sol.deepCopy();
+			//List<ArrayList<Integer>> listOfGamesCnt = sol.getGameListWithCnt();
+			List<ArrayList<Integer>> listOfGamesCnt = sol.getGameListCosts();
+			for(int i=0; i<5; i++){
+				listNeighborhoodGame(listOfGamesCnt,minNotMax,i);
+				System.out.println("... Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep);
+				sol.setSolution(oldSolution);
+			}
+			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep);
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep+"\n";
+			}
+		}
+		else if(neighChoice==2){//best improvement: search through N completely and take the best solution
+			//bestNeighborhoodGame(listOfGames,1);
+			//bestNeighborhoodGame(listOfGames,5);
+			List<List<Game>> oldSolution = sol.deepCopy();
+			for(int i=0; i<5; i++){
+				bestNeighborhoodGame(listOfGames,i);
+				System.out.println(".... Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterations: "+iterationStep);
+				sol.setSolution(oldSolution);
+			}
+			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterations: "+iterationStep);
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterations: "+iterationStep+"\n";
+			}
+		}
+	}
 	
 	/*
 	 * CALL METHODS
@@ -1176,113 +1317,79 @@ public class Neighborhood {
 	 * 1: next improvement
 	 * 2: best improvement
 	 */
-	public void neighborhoodRounds(int neighChoice){	
+	public void neighborhoodRounds(int neighChoice, int from, int to){	
 		//
 		orgSolutionFalse = sol.checkConstraint();
 		//
 		if(neighChoice==0){ //random neighbor
-			for(int i=0; i<sol.getRoundsNum(); i++){
-				randomNeighborhoodRounds(i,1000);
+			int times = 1000;
+			for(int neighCnt=from; neighCnt<to; neighCnt++){
+				randomNeighborhoodRounds(neighCnt, times);
+			}
+			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+times);
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+times+"\n";
 			}
 		}
 		else if(neighChoice==1){//next improvement: search in a specified order, take first solution, which is better than x
-			//ArrayList<Integer> sortList  = getList(sol.getRoundsNum());
-			/*
-			ArrayList<Integer> sortList = new ArrayList<Integer>();
-			for(int i=0; i<sol.getRoundsNum(); i++){
-				sortList.add(neighborhoodList(i,0));
+			for(int neighCnt=from; neighCnt<to; neighCnt++){
+				listNeighborhoodRound(neighCnt,minNotMax);
 			}
-			listNeighborhoodRounds(sortList);
-			*/
-			//ArrayList<Integer> roundList = sol.getCumulativeCostOfRound();
-			//ArrayList<Integer> roundList = sol.getRoundListWithCnt();
-			//ArrayList<Integer> al = getSortedListRounds(roundList, true);
-			//ArrayList<Integer> getRoundListWithCnt()
-			
-			boolean minNotMax = false;
-			int changeCnt = 4;
-			for(int i=0; i<sol.getRoundsNum(); i++){
-				listNeighborhoodRound(i,minNotMax);
+			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep+"\n";
 			}
 		}
 		else if(neighChoice==2){//best improvement: search through N completely and take the best solution
-			//for(int i=1; i<sol.getRoundsNum(); i++){
-			for(int i=0; i<sol.getRoundsNum(); i++){
-				bestNeighborhoodRounds(i);
+			for(int neighCnt=from; neighCnt<to; neighCnt++){
+				bestNeighborhoodRounds(neighCnt);
 			}
-			/*
-			for(int i=0; i<sol.getRoundsNum(); i++){
-				moveListIdx(i);
+			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep+"\n";
 			}
-			*/
-			for(int i=0; i<sol.getRoundsNum(); i++){
-				//for(int i=sol.getRoundsNum(); i>0; i--){
-					moveListIdx(i);
-					bestNeighborhoodRounds(1);
-					List<ArrayList<Integer>> listOfGames = sol.getGameList();
-					bestNeighborhoodGame(listOfGames,5);
-				}
 		}
-		//
-		System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost());
-		//
 	}
-	
 	/*
 	 * neighbor games
 	 * 0: random neighborhood
 	 * 1: next improvement
 	 * 2: best improvement
 	 */
-	public void neighborhoodGames(int neighChoice){
-		//
+	public void neighborhoodGames(int neighChoice, int from, int to){
 		orgSolutionFalse = sol.checkConstraint();
-		//
 		List<ArrayList<Integer>> listOfGames = sol.getGameList();
+		
 		if(neighChoice==0){ //random neighbor
-			//ArrayList<Integer> sortList = getRandomListWithoutRepeats(listOfGames.size());
-			//ArrayList<Integer> sortList = getRandomList(listOfGames.size());
-			//listNeighborhoodGame(listOfGames, sortList);
-			//listNeighborhoodGameRandom(List<ArrayList<Integer>> listOfGames, int n, int changeCnt, int sRandom)
-			for(int i=0; i<5; i++){
-				listNeighborhoodGameRandom(listOfGames, listOfGames.size(), i, 15000);
+			int times = 1000;
+			for(int neighCnt=from; neighCnt<to; neighCnt++){
+					listNeighborhoodGameRandom(listOfGames, listOfGames.size(), neighCnt, times);
 			}
-			
+			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+times);
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+times+"\n";
+			}
 		}
 		else if(neighChoice==1){//next improvement: search in a specified order, take first solution, which is better than x
-			//ArrayList<Integer> sortList  = getList(listOfGamesCnt.size());
-			//List<ArrayList<Integer>> listOfGamesCnt = sol.getGameListWithCnt();
-			//List<ArrayList<Integer>> listOfGamesCnt = sol.getGameListCosts(false);
-			//listNeighborhoodGame(listOfGamesCnt,true);
+			List<List<Game>> oldSolution = sol.deepCopy();
 			List<ArrayList<Integer>> listOfGamesCnt = sol.getGameListCosts();
-			for(int i=0; i<4; i++){
-				listNeighborhoodGame(listOfGamesCnt,true,i);
+			for(int neighCnt=from; neighCnt<to; neighCnt++){
+				listNeighborhoodGame(listOfGamesCnt,minNotMax,neighCnt);
 			}
-			
-			//
+			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep+"\n";
+			}
 		}
 		else if(neighChoice==2){//best improvement: search through N completely and take the best solution
-			//bestNeighborhoodGame(listOfGames,1);
-			//bestNeighborhoodGame(listOfGames,5);
-			for(int i=0; i<6; i++){
-				bestNeighborhoodGame(listOfGames,i);
+			for(int neighCnt=from; neighCnt<to; neighCnt++){
+				bestNeighborhoodGame(listOfGames,neighCnt);
+			}
+			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
+			if(Util.protocolBoolean){
+				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep+"\n";
 			}
 		}
-		//
-		System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost());
-		//
-	}
-		
-	/*
-	 * neighborhood-list
-	 * calculate distance between rounds
-	 */
-	private int neighborhoodList(int round, int idx) {
-		ArrayList<Integer> neighL = sol.getNeigh(round);
-		ArrayList<Integer> sortList = (ArrayList<Integer>) neighL.clone();
-		Collections.sort(sortList);
-		int sortIdx = (neighL.indexOf(sortList.get(idx)));
-		return sortIdx;
 	}
 	
 }
