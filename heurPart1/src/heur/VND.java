@@ -16,7 +16,7 @@ public class VND {
 	
 	public Solution execute(Solution sol) {
 		int i=0;
-		int iterations = 2;
+		int iterations = 5;
 		
 		Neighborhood nh = new Neighborhood(sol);
 		
@@ -24,11 +24,19 @@ public class VND {
 			
 			int oldCost = sol.getCumulativeCost();
 			
+			int bestNext = 2;
 			if (i==0) {
-				nh.neighborhoodRounds(2,2,sol.getRoundsNum());
+				//nh.neighborhoodRounds(2,2,4);
+				nh.neighborhoodRounds(bestNext,2,3);
 			} else if (i==1) {
-				nh.neighborhoodGames(2,1,3);
-				//nh.neighborhoodGames(1,5,6);
+				nh.neighborhoodGames(bestNext,1,2);
+				//nh.neighborhoodGames(2,1,3);
+			} else if (i==2) {
+				nh.neighborhoodGames(bestNext,1,2);
+			} else if (i==3) {
+				nh.neighborhoodRounds(bestNext,3,4);
+			} else if (i==4) {
+				nh.neighborhoodGames(bestNext,2,3);
 			} 
 			
 			if (sol.getCumulativeCost() < oldCost) {

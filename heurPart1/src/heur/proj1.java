@@ -69,7 +69,7 @@ public class proj1 {
 			}
 			Neighborhood n1 = new Neighborhood(sol);
 			//n1.neighborhoodRounds(neigh,2,sol.getRoundsNum());
-			n1.neighborhoodRounds(neigh,0,4);
+			n1.neighborhoodRounds(neigh,1,4);
 			System.err.println("\n1: \n"+sol);
 			if(Util.protocolBoolean){
 				Util.protocol += "\n1: \n"+sol;
@@ -86,13 +86,32 @@ public class proj1 {
 			}
 			//
 			Neighborhood n2 = new Neighborhood(sol);
-			n2.neighborhoodGames(neigh,5,6);
+			n2.neighborhoodGames(neigh,0,5);
 			if(Util.protocolBoolean){
 				Util.protocol += "\n2: \n"+sol;
 			}
 			//
 			System.out.println("\nneigh. solution: \n"+sol);
 		} else if (args[1].equals("-n3")) {
+			//
+			//
+			int neigh = Integer.parseInt( args[4] );
+			System.out.println("Neighborhood "+neigh);
+			System.err.println("\ngreedy solution: \n"+sol);
+			System.err.println("all costs: " +  sol.getCumulativeCost() );
+			//
+			if(Util.protocolBoolean){
+				Util.protocol += "\ngreedy solution: \n"+sol;
+				Util.protocol += "all costs: " +  sol.getCumulativeCost() +"\n";
+			}
+			//
+			NeighborhoodMerg2 n3 = new NeighborhoodMerg2(sol);
+			n3.neighborhoodMerg(neigh,0,5);
+			if(Util.protocolBoolean){
+				Util.protocol += "\n2: \n"+sol;
+			}
+			//
+			System.out.println("\nneigh. solution: \n"+sol);
 			//
 		} else if (args[1].equals("-vnd")) {
 			System.err.println("\ngreedy solution: \n"+sol);
