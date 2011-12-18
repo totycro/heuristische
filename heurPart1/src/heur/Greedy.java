@@ -1,5 +1,7 @@
 package heur;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,8 +47,8 @@ public class Greedy {
 			long subSeed = rand.nextLong();
 			Solution sol = doExecute( subSeed );
 			if (sol != null) {
-				System.err.println("found at "+i);
-				System.err.println("seed: "+ subSeed );
+				//System.err.println("found at "+i);
+				//System.err.println("seed: "+ subSeed );
 				return sol;
 			}
 		}
@@ -92,8 +94,20 @@ public class Greedy {
 					}
 				}
 				
+
+				// code to record no of choices 
+				/* 
+				try {
+					FileWriter fstream = new FileWriter("/tmp/a.asdf", true);
+					fstream.write(preferredCities.size() + "\n");
+					fstream.flush();
+					fstream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				*/
+				
 				// chose one of the best ones
-				// TODO: check how many are best, make sure randomness
 				int which = rand.nextInt(preferredCities.size());
 				int cur = preferredCities.get(which);
 				//log.warning("choose: " + cur);

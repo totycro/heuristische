@@ -1,5 +1,7 @@
 package heur;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -39,6 +41,19 @@ public class GRASP {
 			if(Util.protocolBoolean){
 				Util.protocol += "new solution cost: " + newCosts+"\n";
 			}
+			
+			// code to record all grasp iterations
+			/*
+			try {
+				FileWriter fstream = new FileWriter("/tmp/a.asdf", true);
+				fstream.write(newCosts + "\n");
+				fstream.flush();
+				fstream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			*/
+				
 			if (newCosts < oldCost) {
 				oldCost = newCosts;
 				System.err.println("is new min");

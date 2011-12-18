@@ -1,0 +1,10 @@
+protocol for how many choices greedy has per round per decision. it always takes the city with the smallest value, so this is always the minimum.
+
+num 3817768
+sum 10490064
+avg 2.74769551214
+med 2
+
+max 8
+min 1
+

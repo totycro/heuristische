@@ -69,7 +69,7 @@ public class Solution {
 		
 		public boolean comparePlayers(int aOther, int bOther){
 			return ((aOther==this.a)&&(bOther==this.b)) || ((aOther==this.b)&&(bOther==this.a));
-		}
+		}	
 	}
 
 	private List<List<Game>> solution;
@@ -656,4 +656,25 @@ public class Solution {
 		}
 		return gameListInteger;
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		Solution o = (Solution) other;
+		if (o == null) {
+			return false;
+		}
+		
+		for (int i=0; i<getRoundsNum(); ++i) {
+			List<Game> round = solution.get(i);
+			for (Game game : round) {
+				Game otherGame = o.getGameOfCityInRound(game.a, i);
+				if ( (! otherGame.comparePlayers(game.a, game.b) ) ||
+						otherGame.getLocation() != game.getLocation()) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 }

@@ -1,0 +1,12 @@
+greedy is run consecutively with randomly generated seeds.
+it should not generate the same solution multiple times.
+
+results for n8 (3/3):
+
+solutions : unique ones
+100 		: 100
+1000		: 996 
+10000		: 9833
+100000	:	91486
+
+

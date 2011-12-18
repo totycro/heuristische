@@ -3,6 +3,10 @@ package heur;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 
 public class proj1 {
 
@@ -36,6 +40,8 @@ public class proj1 {
 		int consec_road = Integer.parseInt(args[3]);
 		
 		Problem problem = new Problem(distM, consec_home, consec_road);
+		
+		//testGreedy(problem);
 		
 		// we always need greedy
 		Greedy greedy = new Greedy(problem);
@@ -172,6 +178,57 @@ public class proj1 {
 			out.println();
 		}
 		out.flush();
+	}
+	
+	static public void testGreedy(Problem problem) {
+		Greedy greedy = new Greedy(problem);
+		Random rand = new Random(2);
+		List<Solution> sols = new ArrayList<Solution>();
+		long runs = (long)Math.pow(10, 2);
+		System.err.println("greedys");
+		for (int i=0; i< runs; i++) {
+			sols.add(
+					greedy.execute(rand.nextLong())
+					);
+			if (i % (int)(runs/10) == 0) {
+				System.err.println("greedys at "+i);
+			}
+		}
+		System.err.println("checking");
+		
+		List<Integer> dupsList = new ArrayList<Integer>();
+		HashSet<Integer> alreadyMarked = new HashSet<Integer>();
+		long sum = 0;
+		for (int i=0; i< sols.size(); i++) {
+			if (alreadyMarked.contains(i)) {
+				continue;
+			}
+			Solution cur = sols.get(i);
+			
+			int dups = 0;
+			for (int j=i+1; j<sols.size(); j++) {
+				if (sols.get(j).equals(cur)) {
+					dups ++;
+					alreadyMarked.add(j);
+				}
+			}
+			dupsList.add(dups);
+			sum += dups;
+		
+			if (i % (int)(runs/10) == 0) {
+				System.err.println("checking at "+i);
+			}
+		}
+		
+		int zeros = 0;
+		for (int i=0; i<dupsList.size(); i++) {
+			if (dupsList.get(i) == 0) {
+				zeros +=1;
+			}
+			
+		}
+		System.err.println("done, dups in "+sols.size()+ " : " + sum);
+		System.err.println("zeros: "+zeros);
 	}
 
 }
