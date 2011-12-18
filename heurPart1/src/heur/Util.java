@@ -1,6 +1,7 @@
 package heur;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -54,5 +55,5 @@ public class Util {
 			
 		log.setLevel( on ? Level.ALL : Level.OFF );
 	}
-
+	
 }

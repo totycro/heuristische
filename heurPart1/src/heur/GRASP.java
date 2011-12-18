@@ -43,7 +43,6 @@ public class GRASP {
 			}
 			
 			// code to record all grasp iterations
-			/*
 			try {
 				FileWriter fstream = new FileWriter("/tmp/a.asdf", true);
 				fstream.write(newCosts + "\n");
@@ -52,7 +51,6 @@ public class GRASP {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			*/
 				
 			if (newCosts < oldCost) {
 				oldCost = newCosts;

@@ -1,0 +1,79 @@
+num 500
+
+old unstable (took 2m30s)
+num 500
+sum 23895698
+avg 47791.396
+sdr 1642.6367188
+med 47857
+max 52384
+min 42625
+
+all (took 2m)
+
+sum 24001584
+avg 48003.168
+sdr 1674.881651
+med 48025
+max 54133
+min 42342
+
+half:
+
+sum 24237945
+avg 48475.89
+sdr 1690.02314373
+med 48447
+max 53675
+min 43122
+
+1/4: (NOTE: often the same solution, see sdr)
+sum 23678690
+avg 47357.38
+sdr 544.348773098
+med 47151
+max 48704
+min 47091
+
+2 cities with least possibilities:
+sum 24319211
+avg 48638.422
+sdr 1506.04570956
+med 48582
+max 53615
+min 44946
+
+4 cities with least possibilities (took 1m):
+sum 24111762
+avg 48223.524
+sdr 1557.40389469
+med 48219
+max 53223
+min 42973
+
+3 cities with least possibilities (took 30s):
+sum 24223655
+avg 48447.31
+sdr 1556.8157323
+med 48449
+max 54033
+min 44607
+
+any city with least possiblities:
+num 2000
+sum 97974224
+avg 48987.112
+sdr 1599.04044496
+med 48987
+max 55356
+min 43978
+
+any city in one of the two classes with least possibilities: (took 1m30s)
+sum 24221450
+avg 48442.9
+sdr 1596.50992414
+med 48418
+max 53875
+min 44498
+
+

@@ -184,15 +184,31 @@ public class proj1 {
 		Greedy greedy = new Greedy(problem);
 		Random rand = new Random(2);
 		List<Solution> sols = new ArrayList<Solution>();
-		long runs = (long)Math.pow(10, 2);
+		//long runs = (long)Math.pow(10, 2);
+		long runs = 500 ;
+		long print_every = Math.max(1, (int)(runs/10));
+		//long runs = 2000;
 		System.err.println("greedys");
+		
+		try {
+			FileWriter fstream = new FileWriter("/tmp/a.asdf", true);
+			
 		for (int i=0; i< runs; i++) {
-			sols.add(
-					greedy.execute(rand.nextLong())
-					);
-			if (i % (int)(runs/10) == 0) {
+			Solution sol = greedy.execute(rand.nextLong());
+			sols.add( sol );
+			
+					fstream.write(sol.getCumulativeCost() + "\n");
+					fstream.flush();
+					
+			if (i % print_every == 0) {
 				System.err.println("greedys at "+i);
 			}
+		}
+		
+		fstream.flush();
+		fstream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		System.err.println("checking");
 		
@@ -215,7 +231,7 @@ public class proj1 {
 			dupsList.add(dups);
 			sum += dups;
 		
-			if (i % (int)(runs/10) == 0) {
+			if (i % print_every == 0) {
 				System.err.println("checking at "+i);
 			}
 		}
@@ -230,5 +246,4 @@ public class proj1 {
 		System.err.println("done, dups in "+sols.size()+ " : " + sum);
 		System.err.println("zeros: "+zeros);
 	}
-
 }

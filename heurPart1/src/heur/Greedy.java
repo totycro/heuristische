@@ -3,6 +3,8 @@ package heur;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,10 +47,13 @@ public class Greedy {
 		
 		for (int i=0;;i++) {
 			long subSeed = rand.nextLong();
-			Solution sol = doExecute( subSeed );
+			// more stable:
+			//Solution sol = doExecute( subSeed );
+			// better results:
+			Solution sol = doExecuteUnstable( subSeed );
 			if (sol != null) {
-				//System.err.println("found at "+i);
-				//System.err.println("seed: "+ subSeed );
+				//System.err.println("found at "+i+ "; quality: "+sol.getCumulativeCost());
+				
 				return sol;
 			}
 		}
@@ -69,7 +74,7 @@ public class Greedy {
 			
 			
 			// get possible games for each city
-			HashMap<Integer, List<Solution.Game> > possibleGames = new HashMap<Integer, List<Solution.Game> >();
+			final HashMap<Integer, List<Solution.Game> > possibleGames = new HashMap<Integer, List<Solution.Game> >();
 			
 			for (int i=0; i<solution.getCitiesNum(); ++i) {
 				List<Solution.Game> games = solution.getPossibleGames(i, round, problem.consecHome, problem.consecRoad);
@@ -79,22 +84,14 @@ public class Greedy {
 			
 			while (!possibleGames.isEmpty()) { // assign games until all cities are taken care of
 				
-				// choose city with fewest games left
-				int min = Integer.MAX_VALUE;
-				possibleGames.entrySet();
-				for (Map.Entry<Integer, List<Solution.Game> > entry : possibleGames.entrySet()) {
-					if (entry.getValue().size() < min) {
-						min = entry.getValue().size();
+				// sort cities by no of possible games
+				List<Integer> cities = new ArrayList<Integer>(possibleGames.keySet());
+				Collections.sort(cities, new Comparator<Integer>() {
+					@Override
+					public int compare(Integer o1, Integer o2) {
+						return new Integer(possibleGames.get(o1).size()).compareTo(possibleGames.get(o2).size());
 					}
-				}
-				List<Integer> preferredCities = new ArrayList<Integer>();
-				for (Map.Entry<Integer, List<Solution.Game> > entry : possibleGames.entrySet()) {
-					if (entry.getValue().size() == min) {
-						preferredCities.add(entry.getKey());
-					}
-				}
-				
-
+				});
 				// code to record no of choices 
 				/* 
 				try {
@@ -107,9 +104,47 @@ public class Greedy {
 				}
 				*/
 				
-				// chose one of the best ones
-				int which = rand.nextInt(preferredCities.size());
-				int cur = preferredCities.get(which);
+				//int choices = (int)(possibleGames.size()/4);
+				//choices = Math.max(1, choices);
+				/*
+				 * 
+				 */
+				//int choices = Math.min(3, possibleGames.size());
+				
+				
+				// choose any of the ones with least possiblities
+				/*
+				int choices = cities.size();
+				int min = possibleGames.get( cities.get( 0 ) ).size();
+				for (int i=0; i<cities.size(); i++) {
+					if (possibleGames.get( cities.get( i ) ).size() != min) {
+						break;
+						*/
+				
+				// choose among classes with least possiblities
+				/*
+				int choices = cities.size();
+				int min = possibleGames.get( cities.get( 0 ) ).size();
+				int use_classes = 4;
+				for (int i=0; i<cities.size(); i++) {
+					if (possibleGames.get( cities.get( i ) ).size() != min) {
+						use_classes --;
+						min = possibleGames.get( cities.get( i ) ).size();
+					}
+					if (use_classes == 0) {
+						choices = i;
+						break;
+					}
+				}
+				*/
+				int choices = cities.size();
+				
+				
+				//System.err.println("c: "+choices);
+				
+				int which = rand.nextInt(choices); // choices is exclusive upper bound
+				int cur = cities.get(which);
+				
 				//log.warning("choose: " + cur);
 				
 				// get all games
