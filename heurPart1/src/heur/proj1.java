@@ -1,5 +1,6 @@
 package heur;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,7 +42,7 @@ public class proj1 {
 		
 		Problem problem = new Problem(distM, consec_home, consec_road);
 		
-		//testGreedy(problem);
+		testGreedy(problem);
 		
 		// we always need greedy
 		Greedy greedy = new Greedy(problem);
@@ -181,20 +182,33 @@ public class proj1 {
 	}
 	
 	static public void testGreedy(Problem problem) {
+		boolean do_test = false;
+		if (!do_test) {
+			return;
+		}
 		Greedy greedy = new Greedy(problem);
 		Random rand = new Random(2);
 		List<Solution> sols = new ArrayList<Solution>();
 		//long runs = (long)Math.pow(10, 2);
-		long runs = 500 ;
-		long print_every = Math.max(1, (int)(runs/10));
+		long runs = 400 ;
+		long print_every = Math.max(1, (int)(runs/7));
 		//long runs = 2000;
 		System.err.println("greedys");
 		
 		try {
-			FileWriter fstream = new FileWriter("/tmp/a.asdf", true);
+		
+			String filename = "/tmp/a.asdf";
+			if (new File(filename).exists()) {
+				new File(filename).delete();
+			}
+			FileWriter fstream = new FileWriter(filename, true);
 			
+		long time = 0;
 		for (int i=0; i< runs; i++) {
+			long start = System.currentTimeMillis();
 			Solution sol = greedy.execute(rand.nextLong());
+			long end = System.currentTimeMillis();
+			time += end-start;
 			sols.add( sol );
 			
 					fstream.write(sol.getCumulativeCost() + "\n");
@@ -205,6 +219,7 @@ public class proj1 {
 			}
 		}
 		
+		System.err.println("took "+time + " per run: " + (time / runs));
 		fstream.flush();
 		fstream.close();
 		} catch (IOException e) {
@@ -245,5 +260,6 @@ public class proj1 {
 		}
 		System.err.println("done, dups in "+sols.size()+ " : " + sum);
 		System.err.println("zeros: "+zeros);
+		System.exit(0);
 	}
 }

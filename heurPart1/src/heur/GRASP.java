@@ -3,6 +3,8 @@ package heur;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 public class GRASP {
@@ -11,6 +13,8 @@ public class GRASP {
 	static  {
 		Util.setupLogger(log, /*on=*/true);
 	}
+	
+	private final static int GREEDY_TRIES = 200;
 	
 	private long seed;
 	
@@ -30,7 +34,16 @@ public class GRASP {
 		for (int i=0; i<iterations; ++i) {
 			System.err.println("\ngrasp iteration "+i);
 			
-			Solution sol = greedy.execute( rand.nextLong() );
+			// greedy is fast, so try multiple times for a good solution and use best one
+			SortedMap<Integer, Solution> greedySolutions = new TreeMap<Integer, Solution>();
+			for (int j=0; j<GREEDY_TRIES; ++j) {
+				Solution sol = greedy.execute( rand.nextLong() );
+				greedySolutions.put(sol.getCumulativeCost() , sol);
+			}
+			
+			Solution sol = greedySolutions.get( greedySolutions.firstKey() );
+			
+			// continue with vanilla grasp
 			
 			VND vnd = new VND();
 			vnd.execute(sol);

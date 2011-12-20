@@ -48,9 +48,9 @@ public class Greedy {
 		for (int i=0;;i++) {
 			long subSeed = rand.nextLong();
 			// more stable:
-			//Solution sol = doExecute( subSeed );
+			Solution sol = doExecute( subSeed );
 			// better results:
-			Solution sol = doExecuteUnstable( subSeed );
+			//Solution sol = doExecuteUnstable( subSeed );
 			if (sol != null) {
 				//System.err.println("found at "+i+ "; quality: "+sol.getCumulativeCost());
 				
@@ -104,24 +104,37 @@ public class Greedy {
 				}
 				*/
 				
-				//int choices = (int)(possibleGames.size()/4);
-				//choices = Math.max(1, choices);
+				/*
+				int choices = (int)(possibleGames.size()/2);
+				choices = Math.max(1, choices);
+				*/
 				/*
 				 * 
 				 */
 				//int choices = Math.min(3, possibleGames.size());
 				
 				
-				// choose any of the ones with least possiblities
-				/*
-				int choices = cities.size();
-				int min = possibleGames.get( cities.get( 0 ) ).size();
-				for (int i=0; i<cities.size(); i++) {
-					if (possibleGames.get( cities.get( i ) ).size() != min) {
-						break;
-						*/
+				// choose any of the ones with least possibilities
 				
-				// choose among classes with least possiblities
+				int choices = possibleGames.size();
+				int min = possibleGames.get( cities.get( 0 ) ).size();
+				if (min == 0) {
+					choices = 1; // use first one and fail
+				} else if (min == 1) {
+					// use first class
+					for (int i=0; i<cities.size(); i++) { 
+						if (possibleGames.get( cities.get( i ) ).size() != min) {
+							choices = i;
+							break;
+						}
+					}
+				} else { // no forced decision, choose among good ones
+					choices /= 2;
+					// choices = Math.max(1, choices); // check not needed for division by 2
+				}
+						
+				
+				// choose among classes with least possibilities
 				/*
 				int choices = cities.size();
 				int min = possibleGames.get( cities.get( 0 ) ).size();
@@ -137,10 +150,28 @@ public class Greedy {
 					}
 				}
 				*/
-				int choices = cities.size();
+				/*
+				int choices = possibleGames.size();
+				choices /= 2;
+				*/
 				
 				
 				//System.err.println("c: "+choices);
+				
+				// prefer cities with only 1 possibilities (currently implicitly considered by class)
+				/*
+				boolean do_unit = true;
+				
+				int num_of_least = possibleGames.get(cities.get(0)).size();
+				int cur = -1;
+				if (num_of_least <= 1 && do_unit) {
+					cur = cities.get(0);
+				} else {
+					// no forced decision
+					int which = rand.nextInt(choices); // choices is exclusive upper bound
+					cur = cities.get(which);
+				}
+				*/
 				
 				int which = rand.nextInt(choices); // choices is exclusive upper bound
 				int cur = cities.get(which);
