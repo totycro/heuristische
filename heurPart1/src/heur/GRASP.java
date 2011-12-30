@@ -1,5 +1,6 @@
 package heur;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
@@ -22,12 +23,22 @@ public class GRASP {
 		this.seed = seed;
 	}
 	
+	private static final boolean record_executions = false;
+	
 	public Solution execute(Problem problem, int iterations) {
 		
 		Greedy greedy = new Greedy(problem); //, /*silenceLogger=*/true);
 		
 		Random rand = new Random(seed);
 		
+		
+		String filename = "/tmp/a.asdf";
+		if (record_executions) {
+				if (new File(filename).exists()) {
+					new File(filename).delete();
+				}
+		}
+				
 		Solution bestSol = null;
 		assert (iterations > 0);
 		int oldCost = Integer.MAX_VALUE;
@@ -56,13 +67,16 @@ public class GRASP {
 			}
 			
 			// code to record all grasp iterations
+			if (record_executions) {
 			try {
-				FileWriter fstream = new FileWriter("/tmp/a.asdf", true);
+					
+				FileWriter fstream = new FileWriter(filename, true);
 				fstream.write(newCosts + "\n");
 				fstream.flush();
 				fstream.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
 			}
 				
 			if (newCosts < oldCost) {

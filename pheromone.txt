@@ -1,0 +1,17 @@
+es gibt einige möglichkeiten, aber alle wirken suboptimal.
+
+n x n-matrix: desirability eines spiels in x, nachdem in y gespielt wurde
+- per stadt:
+	- viele einzelmatrizen, werte finden dauert lange
+	- constraints schwierig, weil diese nur in verbindung mit anderen städten entstehen
+- eine gemeinsame matrix:
+	- home/away passt nicht, in A zu spielen bedeutet für A was ganz anderes als für B
+	
+2n * 2n matrix: unterscheidung A und @A
+- wieder per stadt/gemeinsam
+- home/away wieder nicht für alle teams gleich
+- in erstem paper verwendet mit mäßigem erfolg
+
+
+per runde: n * n * 2*(n-1)
+- auch fokus auf position, nicht nur kante, was eigtl irrelevant ist
