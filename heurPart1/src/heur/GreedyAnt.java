@@ -139,7 +139,7 @@ public class GreedyAnt {
 				
 				// calculate auxiliary values
 				Map<Solution.Game, Double> dist_quotient = new HashMap<Solution.Game, Double>(); // value for distance, in [0,1]
-				Map<Solution.Game, Double> pheromone_quotient = new HashMap<Solution.Game, Double>(); // desirability, also in [0,1]
+				Map<Solution.Game, Double> pheromone_quotient = new HashMap<Solution.Game, Double>(); // desirability
 				
 				// dist_quot = dist_to_city / max_dist_of_possible_games
 				{
@@ -166,8 +166,15 @@ public class GreedyAnt {
 				
 				// pheromone_quot: just take value from table
 				int lastLoc = lastLocations.get(cur);
+				if (lastLoc != cur) { // away
+					lastLoc += problem.getCitiesNum();
+				}
 				for (Solution.Game game : games) {
-					pheromone_quotient.put(game, problem.pheromones[lastLoc][game.getOther(cur)] );
+					int thisLoc = game.getOther(cur);
+					if (thisLoc != cur) { // away
+						thisLoc += problem.getCitiesNum();
+					}
+					pheromone_quotient.put(game, problem.pheromones[lastLoc][thisLoc] );
 				}
 				
 				// take min

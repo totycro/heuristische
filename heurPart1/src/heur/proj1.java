@@ -17,13 +17,13 @@ public class proj1 {
 	public static void main(String[] args) {
 		
 		if (args.length != 5) {
-			System.err.println("USAGE: <program> input { -g | -n1 | -n2 | -vnd | -grasp | -ant } ch cr param1");
+			System.err.println("USAGE: <program> input { -g | -n1 | -n2 | -vnd | -grasp | -aco } ch cr param1");
 			System.err.println("\t-g: greedy construction");
 			System.err.println("\t-n1: neighborhood search 1");
 			System.err.println("\t-n2: neighborhood search 2");
 			System.err.println("\t-vnd: variable neighborhood descent");
 			System.err.println("\t-grasp: do grasp.");
-			System.err.println("\t-ant: do aco.");
+			System.err.println("\t-aco: do aco.");
 			System.err.println("\tch: max consecutive home");
 			System.err.println("\tcr: max consecutive road");
 			System.err.println("\tparam1");
@@ -144,7 +144,14 @@ public class proj1 {
 			if(Util.protocolBoolean){
 				Util.protocol += "\ngrasp solution: \n"+sol;
 			}
-		} else if (args[1].equals("-ant")) {
+		} else if (args[1].equals("-aco")) {
+			
+			ACO aco = new ACO(problem);
+			
+			sol = aco.execute();
+			
+			System.out.println("\naco solution: \n"+sol);
+			
 		} else {
 			System.err.println("invalid param: " + args[1]);
 			System.exit(1);
@@ -173,10 +180,20 @@ public class proj1 {
 		}
 	}
 	
-	static private void printMatrix(int [][] M, PrintWriter out) {
+	static public void printMatrix(int [][] M, PrintWriter out) {
 		for (int i=0; i<M.length; ++i) {
 			for (int j=0; j<M[0].length; ++j) {
 				out.format("%6d", M[i][j]);
+			}
+			out.println();
+		}
+		out.flush();
+	}
+		
+	static public void printMatrix(Double [][] M, PrintWriter out) {
+		for (int i=0; i<M.length; ++i) {
+			for (int j=0; j<M[0].length; ++j) {
+				out.format("%3f ", M[i][j]);
 			}
 			out.println();
 		}
