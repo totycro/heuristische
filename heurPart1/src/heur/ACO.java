@@ -14,9 +14,8 @@ public class ACO {
 	public Solution execute() {
 		GreedyAnt g = new GreedyAnt(problem);
 		
-		// TODO: loop
-		int iterations = 100;
-		int ants = 10;
+		int iterations = 101;
+		int ants = 15;
 		
 		long time = Calendar.getInstance().getTimeInMillis();
 		
@@ -25,8 +24,11 @@ public class ACO {
 		for (int iteration=0; iteration<iterations; ++iteration) {
 
 			List<Solution> solutions = new ArrayList<Solution>();
+			
+			//System.err.println("aco it: "+iteration);
 
 			for (int i=0; i<ants; i++) {
+				//System.err.println("\tant: "+i+" of "+ants);
 				Solution sol = g.execute( i + (ants * iteration) ); // an
 				solutions.add(sol);
 			}
@@ -43,25 +45,60 @@ public class ACO {
 
 			//for (int i=0; i<solutions.size(); ++i) { System.err.println(i + ": " + solutions.get(i).getCumulativeCost()); }
 			
+			double delta = 0.02;
 			// update pheromones of 2 best ants
 			// LESS MEANS BETTER
 			for (int j=0; j<problem.pheromones.length; j++) {
 				for (int k=0; k<problem.pheromones.length; k++) {
 					if (j!=k) {
-						problem.pheromones[j][k] += 0.02;
+						problem.pheromones[j][k] += delta;
 					}
 				}
 			}
 			for (int i=0; i<2; ++i) {
 				Solution sol = solutions.get(i);
 				
-			
+				//System.err.println(sol);
+				//System.err.println("before:");
+				//proj1.printMatrix(problem.pheromones, new PrintWriter(System.err));
 				
 				for (int round = 0; round < sol.getRoundsNum(); round++) {
 					for (int city = 0; city < sol.getCitiesNum(); city++) {
+						
+						//Solution.Game game = sol.getGameOfCityInRound(city, round);
+						//System.err.println("game: " + game);
+						
+						/*
+						
+						int other = game.getOther(city);
+						if (game.playAt(other)) { // away game
+							other += sol.getCitiesNum();
+						}
+						int lastOther = -1;
+						if (round == 0) {
+							// we start at home
+							lastOther = city;
+						} else {
+							Solution.Game lastGame = sol.getGameOfCityInRound(city, round-1);
+							lastOther = lastGame.getOther(city);
+							if (lastGame.playAt(lastOther)) { // away game
+								lastOther += sol.getCitiesNum();
+							}
+						}
+						*/
+						//System.err.println("last: " + lastOther+ "; now: " +other);
+						
+						//System.err.print
+						int[] indices = sol.getPheromoneMatrixIndices(round, city);
+						// LESS MEANS BETTER
+						problem.pheromones[indices[0]][indices[1]] -= delta;
+						//System.err.println("indices: " + indices[0]+ " " + indices[1]);
+						/*
+						 * old wrong code
 						Solution.Game game = sol.getGameOfCityInRound(city, round);
+							
 						int lastLoc = (round == 0) ? city : sol.getLocationOfGame(city, round-1);
-						int thisLoc = game.getLocation();
+						int lastLoc = (round == 0) ? city : sol.getLocationOfGame(city, round-1);
 						if (lastLoc == thisLoc) {
 							continue;
 						}
@@ -69,13 +106,19 @@ public class ACO {
 						if (lastLoc != city) { // away, this means upper values
 							lastLoc += sol.getCitiesNum();
 						}
+						
 						if (thisLoc != city) { // away, this means upper values
 							thisLoc += sol.getCitiesNum();
 						}
+						System.err.println("last: " + lastLoc+ "; now: " +thisLoc);
 						
 						problem.pheromones[lastLoc][thisLoc] -= 0.02;
+						*/
 					}
 				}
+				//System.err.println("after:");
+				//proj1.printMatrix(problem.pheromones, new PrintWriter(System.err));
+				//System.exit(0);
 			}
 			
 			if (iteration % 10 == 0) {

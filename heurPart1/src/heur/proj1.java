@@ -193,7 +193,7 @@ public class proj1 {
 	static public void printMatrix(Double [][] M, PrintWriter out) {
 		for (int i=0; i<M.length; ++i) {
 			for (int j=0; j<M[0].length; ++j) {
-				out.format("%3f ", M[i][j]);
+				out.format("%2.2f ", M[i][j]);
 			}
 			out.println();
 		}

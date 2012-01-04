@@ -25,14 +25,17 @@ public class GreedyAnt {
 	private Problem problem;
 
 	public GreedyAnt(Problem problem) {
-		this(problem, false);
+		//this(problem, false);
+		this.problem = problem;
 	}
+	/*
 	public GreedyAnt(Problem problem, boolean silenceLogger) {
 		this.problem = problem;
 		if (silenceLogger) {
 			log.setLevel( Level.OFF );
 		}
 	}
+	*/
 	
 	/**
 	 * Executes the greedy construction heuristic.
@@ -70,7 +73,7 @@ public class GreedyAnt {
 		
 		for (int round=0; round<solution.getRoundsNum(); ++round) {
 			//Set<Integer> curCities = (HashSet<Integer>) _cities.clone();
-			log.warning("\nROUND: " + round);
+			log.warning("ROUND: " + round);
 			
 			
 			// get possible games for each city
@@ -80,16 +83,6 @@ public class GreedyAnt {
 				List<Solution.Game> games = solution.getPossibleGames(i, round, problem.consecHome, problem.consecRoad);
 				possibleGames.put(i, games);
 			}
-			
-			Map<Integer, Integer> lastLocations = new HashMap<Integer, Integer>();  
-			// locations in former round
-			{
-				for (int i=0; i<problem.getCitiesNum(); i++) {
-					int lastLoc = (round == 0) ? i : solution.getLocationOfGame(i, round-1);
-					lastLocations.put(i, lastLoc);
-				}
-			}
-			
 			
 			while (!possibleGames.isEmpty()) { // assign games until all cities are taken care of
 				
@@ -116,7 +109,7 @@ public class GreedyAnt {
 						}
 					}
 				} else { // no forced decision, choose among good ones
-					choices /= 2;
+					//choices /= 2;
 					// choices = Math.max(1, choices); // check not needed for division by 2
 				}
 								
@@ -150,7 +143,13 @@ public class GreedyAnt {
 						int gameLocation = game.getLocation();
 						for (int player : game.getPlayers()) {
 							//  players start at home
-							int lastLoc = lastLocations.get(player);
+							//int lastLoc = lastLocations.get(player);
+							int lastLoc;
+							if (round == 0) {
+								lastLoc = player;
+							} else {
+								lastLoc = solution.getLocationOfGame(player, round-1);
+							}
 							travelDistance += problem.getDistance(lastLoc, gameLocation);
 						}
 						if (travelDistance > max_dist) {
@@ -165,29 +164,23 @@ public class GreedyAnt {
 				}
 				
 				// pheromone_quot: just take value from table
-				int lastLoc = lastLocations.get(cur);
-				if (lastLoc != cur) { // away
-					lastLoc += problem.getCitiesNum();
-				}
 				for (Solution.Game game : games) {
-					int thisLoc = game.getOther(cur);
-					if (thisLoc != cur) { // away
-						thisLoc += problem.getCitiesNum();
-					}
-					pheromone_quotient.put(game, problem.pheromones[lastLoc][thisLoc] );
+					int[] indices = solution.getPheromoneMatrixIndices(round, cur, game);
+					pheromone_quotient.put(game, problem.pheromones[indices[0]][indices[1]] );
 				}
 				
 				// take min
 				
 				double minRating = Double.MAX_VALUE;
 				double dist_weight = 1.0;
-				double pheromone_weight = 1.0;
+				double pheromone_weight = 10.0;
 				
 				Solution.Game chosenGame = null;
 				for (Solution.Game game : games) {
 					double rating =
 							(dist_quotient.get(game) * dist_weight) +
 							(pheromone_quotient.get(game) * pheromone_weight);
+					
 					
 					if (rating < minRating) {
 						chosenGame = game;
@@ -212,6 +205,7 @@ public class GreedyAnt {
 				}
 				
 				solution.addGame(chosenGame, round);
+				//log.info("game: " +chosenGame);
 			}
 			
 		}

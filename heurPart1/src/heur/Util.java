@@ -45,7 +45,12 @@ public class Util {
 		log.addHandler( new Handler() {
 			@Override
 			public void publish(LogRecord record) {
-				//System.err.println(record.getLevel() + ": " + record.getMessage());
+				String msg = record.getMessage();
+				if (msg.startsWith("\n")) {
+					System.err.println();
+					msg = msg.substring(1);
+				}
+				System.err.println(record.getLevel() + ": " + msg);
 			}
 			@Override
 			public void flush() { }

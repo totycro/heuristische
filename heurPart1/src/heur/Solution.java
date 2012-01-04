@@ -22,6 +22,12 @@ public class Solution {
 		boolean playAtA;
 
 		public Game(int a, int b, boolean playAtFirst) {
+			if (a > b) {
+				int tmp = a;
+				a = b;
+				b = tmp;
+				playAtFirst = !playAtFirst;
+			}
 			this.a = a;
 			this.b = b;
 			this.playAtA = playAtFirst;
@@ -656,6 +662,37 @@ public class Solution {
 		}
 		return gameListInteger;
 	}
+	
+	public int[] getPheromoneMatrixIndices(int round, int city) {
+		return getPheromoneMatrixIndices(round, city, null);
+	}
+		
+	public int[] getPheromoneMatrixIndices(int round, int city, Game game) {
+		int[] indices = new int[2];
+		if (game == null) {
+			game = getGameOfCityInRound(city, round);
+		}
+		
+		int other = game.getOther(city);
+		if (game.playAt(other)) { // away game
+			other += getCitiesNum();
+		}
+		int lastOther = -1;
+		if (round == 0) {
+			// we start at home
+			lastOther = city;
+		} else {
+			Solution.Game lastGame = getGameOfCityInRound(city, round-1);
+			lastOther = lastGame.getOther(city);
+			if (lastGame.playAt(lastOther)) { // away game
+				lastOther += getCitiesNum();
+			}
+		}
+		indices[0] = lastOther;
+		indices[1] = other;
+		return indices;
+	}
+
 	
 	@Override
 	public boolean equals(Object other) {
