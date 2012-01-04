@@ -14,12 +14,14 @@ public class ACO {
 	public Solution execute() {
 		GreedyAnt g = new GreedyAnt(problem);
 		
-		int iterations = 101;
-		int ants = 20;
+		int iterations = 1000;
+		int ants = 15;
 		
 		long time = Calendar.getInstance().getTimeInMillis();
 		
 		Solution bestSol = null;
+		
+		ArrayList<Integer> bestSolValues = new ArrayList<Integer>();
 		
 		for (int iteration=0; iteration<iterations; ++iteration) {
 			
@@ -60,7 +62,7 @@ public class ACO {
 				}
 			}
 			double update_importance = 1.0;
-			for (int i=0; i<2; ++i) {
+			for (int i=0; i<1; ++i) {
 				update_importance -= 0.1;
 				Solution sol = solutions.get(i);
 				
@@ -127,19 +129,40 @@ public class ACO {
 				//System.exit(0);
 			}
 			
-			if (iteration % 10 == 0) {
+			if (iteration % 50 == 0) {
 				System.err.print("\n");
 				proj1.printMatrix(problem.pheromones, new PrintWriter(System.err));
 				System.err.print("\n");
-				GreedyAnt.dist_weight *= 0.85;
 				//System.err.println ("new weight: " + GreedyAnt.dist_weight);
 			}
 			
+			if (iteration % (int)(iterations/10) == 0) {
+				GreedyAnt.dist_weight *= 0.85;
+			}
+			
 			Solution bestSolHere = solutions.get(0);
-			System.err.println("best in iteration "+iteration+": "+bestSolHere.getCumulativeCost());
+			bestSolValues.add(bestSolHere.getCumulativeCost());
+			
+			if (iteration % 10 == 0) {
+				System.err.println("best in iteration "+iteration+": "+bestSolHere.getCumulativeCost());
+			}
+			
 			if (bestSol == null || bestSolHere.getCumulativeCost() < bestSol.getCumulativeCost()) {
 				bestSol = bestSolHere;
 			}
+		}
+		
+		int x = 0;
+		int partSize = bestSolValues.size()/20;
+		for (int i=0; i<bestSolValues.size(); i++) {
+			x += bestSolValues.get(i);
+			
+			if (i % partSize == 0) {
+				System.err.println ( i/partSize + ": " + x/partSize );
+				x = 0;
+			}
+			
+			
 		}
 		
 		
