@@ -22,12 +22,14 @@ public class Solution {
 		boolean playAtA;
 
 		public Game(int a, int b, boolean playAtFirst) {
+			/*
 			if (a > b) {
 				int tmp = a;
 				a = b;
 				b = tmp;
 				playAtFirst = !playAtFirst;
 			}
+			*/
 			this.a = a;
 			this.b = b;
 			this.playAtA = playAtFirst;

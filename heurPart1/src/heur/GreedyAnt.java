@@ -17,6 +17,11 @@ import java.util.logging.Logger;
 
 public class GreedyAnt {
 	
+	public static double dist_weight = 1.0;
+	public static double pheromone_weight = 1.0;
+	
+	public static boolean some_flag = false;
+	
 	private final static Logger log = Logger.getLogger(GreedyAnt.class.getName());
 	static  {
 		Util.setupLogger(log, /*on=*/false);
@@ -109,7 +114,7 @@ public class GreedyAnt {
 						}
 					}
 				} else { // no forced decision, choose among good ones
-					//choices /= 2;
+					choices /= 2;
 					// choices = Math.max(1, choices); // check not needed for division by 2
 				}
 								
@@ -166,25 +171,54 @@ public class GreedyAnt {
 				// pheromone_quot: just take value from table
 				for (Solution.Game game : games) {
 					int[] indices = solution.getPheromoneMatrixIndices(round, cur, game);
+					/*
+					if (some_flag && round >1) {
+						System.err.println("round: " +round);
+						System.err.println("game: " +game);
+						System.err.println("last: " +solution.getGameOfCityInRound(cur, round-1));
+						System.err.println("therefore indices : " +indices[0] +  " " + indices[1]);
+					}
+					*/
 					pheromone_quotient.put(game, problem.pheromones[indices[0]][indices[1]] );
 				}
+					//if (some_flag && round >1) { System.exit(0); }
 				
 				// take min
 				
 				double minRating = Double.MAX_VALUE;
-				double dist_weight = 1.0;
-				double pheromone_weight = 10.0;
 				
 				Solution.Game chosenGame = null;
+				
+				//boolean decisionDebug = some_flag;
+				boolean decisionDebug = false;
+				
+				if (decisionDebug) {
+					System.err.println("\n");
+					System.err.println("decision; round " + round);
+					System.err.println("dist_weigh: " + dist_weight);
+					System.err.println("pher_weigh: " + pheromone_weight);
+				}
+					
 				for (Solution.Game game : games) {
+				
+					
 					double rating =
 							(dist_quotient.get(game) * dist_weight) +
 							(pheromone_quotient.get(game) * pheromone_weight);
-					
+						
+					if (decisionDebug) {
+						System.err.println("possiblity: " +game);
+						System.err.println("dist: " +dist_quotient.get(game));
+						System.err.println("pher: " +pheromone_quotient.get(game));
+						System.err.println("rat: " + rating);
+					}
 					
 					if (rating < minRating) {
+						if (decisionDebug) {
+							System.err.println("choose;");
+						}
 						chosenGame = game;
-						rating = minRating;
+						minRating = rating;
 					}
 				}
 					

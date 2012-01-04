@@ -15,13 +15,17 @@ public class ACO {
 		GreedyAnt g = new GreedyAnt(problem);
 		
 		int iterations = 101;
-		int ants = 15;
+		int ants = 20;
 		
 		long time = Calendar.getInstance().getTimeInMillis();
 		
 		Solution bestSol = null;
 		
 		for (int iteration=0; iteration<iterations; ++iteration) {
+			
+			if (iteration == 2) {
+				GreedyAnt.some_flag = true;
+			}
 
 			List<Solution> solutions = new ArrayList<Solution>();
 			
@@ -55,7 +59,9 @@ public class ACO {
 					}
 				}
 			}
+			double update_importance = 1.0;
 			for (int i=0; i<2; ++i) {
+				update_importance -= 0.1;
 				Solution sol = solutions.get(i);
 				
 				//System.err.println(sol);
@@ -91,7 +97,7 @@ public class ACO {
 						//System.err.print
 						int[] indices = sol.getPheromoneMatrixIndices(round, city);
 						// LESS MEANS BETTER
-						problem.pheromones[indices[0]][indices[1]] -= delta;
+						problem.pheromones[indices[0]][indices[1]] -= delta * update_importance;
 						//System.err.println("indices: " + indices[0]+ " " + indices[1]);
 						/*
 						 * old wrong code
@@ -125,6 +131,8 @@ public class ACO {
 				System.err.print("\n");
 				proj1.printMatrix(problem.pheromones, new PrintWriter(System.err));
 				System.err.print("\n");
+				GreedyAnt.dist_weight *= 0.85;
+				//System.err.println ("new weight: " + GreedyAnt.dist_weight);
 			}
 			
 			Solution bestSolHere = solutions.get(0);
