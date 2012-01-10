@@ -51,7 +51,7 @@ public class ACO {
 
 			//for (int i=0; i<solutions.size(); ++i) { System.err.println(i + ": " + solutions.get(i).getCumulativeCost()); }
 			
-			double delta = 0.02;
+			double delta = 0.01; //double delta = 0.01;
 			// update pheromones of 2 best ants
 			// LESS MEANS BETTER
 			for (int j=0; j<problem.pheromones.length; j++) {
@@ -62,13 +62,20 @@ public class ACO {
 				}
 			}
 			double update_importance = 1.0;
-			for (int i=0; i<1; ++i) {
-				update_importance -= 0.1;
+			for (int i=0; i<3; ++i) {
+				update_importance -= 0.2; //update_importance -= 0.2; 3 ameisen
 				Solution sol = solutions.get(i);
-				
+				//Neighborhood nh = new Neighborhood(sol);
+				//nh.neighborhoodRounds(1, 0, 3);
+				//LOCAL SEARCH
 				//System.err.println(sol);
 				//System.err.println("before:");
 				//proj1.printMatrix(problem.pheromones, new PrintWriter(System.err));
+				if(i==0){
+					Neighborhood nh = new Neighborhood(sol);
+					nh.neighborhoodGames(1, 0, 3);
+					nh.neighborhoodRounds(1, 0, 3);
+				}
 				
 				for (int round = 0; round < sol.getRoundsNum(); round++) {
 					for (int city = 0; city < sol.getCitiesNum(); city++) {

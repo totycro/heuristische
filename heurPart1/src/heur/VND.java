@@ -37,6 +37,10 @@ public class VND {
 				nh.neighborhoodRounds(bestNext,3,4);
 			} else if (i==4) {
 				nh.neighborhoodGames(bestNext,2,3);
+			} else if (i==5) {
+				nh.neighborhoodTeams(1);
+			} else if (i==6) {
+				nh.neighborhoodTeams(2);
 			} 
 			
 			if (sol.getCumulativeCost() < oldCost) {

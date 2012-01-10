@@ -864,6 +864,110 @@ public class Neighborhood {
 		}
 	}
 	
+	private void changeGame(Game game, int ch, int ch2){
+		if(game.a==ch){
+			game.a = ch2;
+		}
+		else if(game.a==ch2){
+			game.a = ch;
+		}
+		//
+		if(game.b==ch){
+			game.b = ch2;
+		}
+		else if(game.b==ch2){
+			game.b = ch;
+		}
+	}
+	
+	private void changeTeams(){
+		//
+		int costsOrg = sol.getCumulativeCost();
+		//
+		for(int ch=0; ch<sol.getCitiesNum(); ch++){
+			for(int ch2=ch+1; ch2<sol.getCitiesNum(); ch2++){
+				//
+				Game game = null;
+				for (int round = 0; round < sol.getSolution().size(); round++) {
+					for (int city = 0; city < sol.getSolution().get(0).size(); city++) {
+						game = sol.getSolution().get(round).get(city);
+						changeGame(game, ch, ch2);
+					}
+				}
+				int costs = sol.getCumulativeCost();
+				//
+				boolean badConstraint = sol.checkConstraint();
+				if((costsOrg<=costs) || badConstraint){
+					for (int round = 0; round < sol.getSolution().size(); round++) {
+						for (int city = 0; city < sol.getSolution().get(0).size(); city++) {
+							game = sol.getSolution().get(round).get(city);
+							changeGame(game, ch2, ch);
+						}
+					}
+				}
+				else{
+					System.out.println("Improvement "+ch+" - "+ch2+": "+costs);
+					System.out.println(sol);
+					if(Util.protocolBoolean){
+						Util.protocol += "Improvement "+ch+" - "+ch2+": "+costs+"\n";
+					}
+				}
+		}
+		}
+	}
+	
+	private void changeTeams2(int cho){
+		//
+		int costsOrg = sol.getCumulativeCost();
+		//
+		for(int ch=0; ch<sol.getCitiesNum(); ch++){
+			for(int ch2=ch+1; ch2<sol.getCitiesNum(); ch2++){
+				for(int ch3=ch2+1; ch3<sol.getCitiesNum(); ch3++){
+				//
+				Game game = null;
+				for (int round = 0; round < sol.getSolution().size(); round++) {
+					for (int city = 0; city < sol.getSolution().get(0).size(); city++) {
+						game = sol.getSolution().get(round).get(city);
+						if(cho==0){
+							changeGame(game, ch, ch2);
+							changeGame(game, ch, ch3);
+						}
+						else{
+							changeGame(game, ch, ch2);
+							changeGame(game, ch2, ch3);
+						}
+					}
+				}
+				int costs = sol.getCumulativeCost();
+				//
+				boolean badConstraint = sol.checkConstraint();
+				if((costsOrg<=costs) || badConstraint){
+					for (int round = 0; round < sol.getSolution().size(); round++) {
+						for (int city = 0; city < sol.getSolution().get(0).size(); city++) {
+							game = sol.getSolution().get(round).get(city);
+							if(cho==0){
+								changeGame(game, ch3, ch);
+								changeGame(game, ch2, ch);
+							}
+							else{
+								changeGame(game, ch3, ch2);
+								changeGame(game, ch2, ch);
+							}
+						}
+					}
+				}
+				else{
+					System.out.println("Improvement "+ch+" - "+ch2+" - "+ch3+": "+costs);
+					System.out.println(sol);
+					if(Util.protocolBoolean){
+						Util.protocol += "Improvement "+ch+" - "+ch2+" - "+ch3+": "+costs+"\n";
+					}
+				}
+		}
+			}
+		}
+	}
+	
 	private void getStatistic(ArrayList<Integer> al){
 		int average = 0;
 		for(int i=0; i<al.size(); i++){
@@ -1088,6 +1192,18 @@ public class Neighborhood {
 				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep+"\n";
 			}
 		}
+	}
+	
+	public void neighborhoodTeams(int neighChoice){
+		if(neighChoice==1){
+			changeTeams();
+		}
+		else{
+			changeTeams2(0);
+			changeTeams2(1);
+		}
+			
+		//}
 	}
 	
 }

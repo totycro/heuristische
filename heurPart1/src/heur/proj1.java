@@ -113,8 +113,8 @@ public class proj1 {
 				Util.protocol += "all costs: " +  sol.getCumulativeCost() +"\n";
 			}
 			//
-			NeighborhoodMerg2 n3 = new NeighborhoodMerg2(sol);
-			n3.neighborhoodMerg(neigh,0,5);
+			NeighborhoodTeams n3 = new NeighborhoodTeams(sol);
+			n3.neighborhoodTeams(neigh);
 			if(Util.protocolBoolean){
 				Util.protocol += "\n2: \n"+sol;
 			}
