@@ -11,7 +11,7 @@ public class ACO {
 		this.problem = problem;
 	}
 	
-	private static boolean do_greedy = false; // false means random ant
+	private static boolean do_greedy = true; // false means random ant
 	
 	
 	public Solution execute() {
@@ -89,7 +89,13 @@ public class ACO {
 				}
 			}
 			double update_importance = 1.0;
-			for (int i=0; i<3; ++i) {
+			int num_ants_allowed_to_set = -1;
+			if (do_greedy) {
+				num_ants_allowed_to_set = 3;
+			} else {
+				num_ants_allowed_to_set = 1;
+			}
+			for (int i=0; i<num_ants_allowed_to_set; ++i) {
 				update_importance -= 0.2; //update_importance -= 0.2; 3 ameisen
 				Solution sol = solutions.get(i);
 				//Neighborhood nh = new Neighborhood(sol);
@@ -99,13 +105,13 @@ public class ACO {
 				//System.err.println("before:");
 				//proj1.printMatrix(problem.pheromones, new PrintWriter(System.err));
 				if (do_greedy) {
-					if(i == 0 ) {
+					if(i < 3 ) {
 						Neighborhood nh = new Neighborhood(sol);
 						nh.neighborhoodGames(1, 0, 3);
 						nh.neighborhoodRounds(1, 0, 3);
 					}
 				} else { // more local search for random
-					if(i < 2 ) {
+					if(i < 3 ) { // doesn't matter if only first ant sets
 						Neighborhood nh = new Neighborhood(sol);
 						nh.neighborhoodGames(1, 0, 3);
 						nh.neighborhoodRounds(1, 0, 3);
