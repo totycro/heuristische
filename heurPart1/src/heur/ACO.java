@@ -105,7 +105,7 @@ public class ACO {
 				//System.err.println("before:");
 				//proj1.printMatrix(problem.pheromones, new PrintWriter(System.err));
 				if (do_greedy) {
-					if(i < 3 ) {
+					if(i == 0 ) {
 						Neighborhood nh = new Neighborhood(sol);
 						nh.neighborhoodGames(1, 0, 3);
 						nh.neighborhoodRounds(1, 0, 3);
