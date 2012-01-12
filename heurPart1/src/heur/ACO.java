@@ -11,7 +11,7 @@ public class ACO {
 		this.problem = problem;
 	}
 	
-	private static boolean do_greedy = true; // false means random ant
+	private static boolean do_greedy = false; // false means random ant
 	
 	
 	public Solution execute() {
@@ -30,7 +30,7 @@ public class ACO {
 			ants = 15;
 		} else { // random
 			iterations = 500;
-			ants = 50;
+			ants = 100;
 		}
 		
 		long time = Calendar.getInstance().getTimeInMillis();
@@ -189,6 +189,7 @@ public class ACO {
 				GreedyAnt.dist_weight *= 0.85;
 			}
 			
+			// PROTOKOLL:
 			
 			Solution bestSolHere = null;
 			//System.err.println("best invalid: " + solutions.get(0));
@@ -214,8 +215,12 @@ public class ACO {
 					bestSol = bestSolHere;
 				}
 			}
-		}
-		
+		} // big loop end
+
+		Neighborhood nh = new Neighborhood(bestSol);
+		nh.neighborhoodGames(1, 0, 4);
+		nh.neighborhoodRounds(1, 0, 4);
+
 		int x = 0;
 		if (bestSolValues.size() > 0) {
 			int partSize = bestSolValues.size()/20;

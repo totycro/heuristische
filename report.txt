@@ -1,0 +1,15 @@
+
+- einleitung (a)
+- phermone (b)
+- construct. heur. 
+	- beschreibung (b)
+	  - greedy
+		- random
+	- lokale suche (a)	
+- ergebnisse (a)
+	- greedy
+	- random
+
+
+
+protokoll (a)
