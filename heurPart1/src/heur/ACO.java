@@ -11,11 +11,27 @@ public class ACO {
 		this.problem = problem;
 	}
 	
+	private static boolean do_greedy = false; // false means random ant
+	
+	
 	public Solution execute() {
-		GreedyAnt g = new GreedyAnt(problem);
+		Ant g;
+		if (do_greedy) {
+			g = new GreedyAnt(problem);
+		} else {
+			g = new RandomAnt(problem);
+		}
 		
-		int iterations = 1000;
-		int ants = 15;
+		int iterations = -1;
+		int ants = -1;
+		
+		if (do_greedy) {
+			iterations = 500;
+			ants = 15;
+		} else { // random
+			iterations = 500;
+			ants = 50;
+		}
 		
 		long time = Calendar.getInstance().getTimeInMillis();
 		
@@ -36,16 +52,27 @@ public class ACO {
 			for (int i=0; i<ants; i++) {
 				//System.err.println("\tant: "+i+" of "+ants);
 				Solution sol = g.execute( i + (ants * iteration) ); // an
+				sol.consecHome = problem.consecHome;
+				sol.conseqRoad = problem.consecRoad;
 				solutions.add(sol);
 			}
 
 			// sort ants
-			Collections.sort(solutions, new Comparator<Solution>() {
-				@Override
-				public int compare(Solution o1, Solution o2) {
-					return new Integer(o1.getCumulativeCost()).compareTo(o2.getCumulativeCost());
-				}
-			});
+			if (do_greedy) {
+				Collections.sort(solutions, new Comparator<Solution>() {
+					@Override
+					public int compare(Solution o1, Solution o2) {
+						return new Integer(o1.getCumulativeCost()).compareTo(o2.getCumulativeCost());
+					}
+				});
+			} else {
+				Collections.sort(solutions, new Comparator<Solution>() {
+					@Override
+					public int compare(Solution o1, Solution o2) {
+						return new Integer(o1.getCumulativeCost() + o1.getPunishment()).compareTo(o2.getCumulativeCost() + o2.getPunishment());
+					}
+				});
+			}
 
 			// first ant is best ant
 
@@ -71,12 +98,20 @@ public class ACO {
 				//System.err.println(sol);
 				//System.err.println("before:");
 				//proj1.printMatrix(problem.pheromones, new PrintWriter(System.err));
-				if(i==0){
-					Neighborhood nh = new Neighborhood(sol);
-					nh.neighborhoodGames(1, 0, 3);
-					nh.neighborhoodRounds(1, 0, 3);
+				if (do_greedy) {
+					if(i == 0 ) {
+						Neighborhood nh = new Neighborhood(sol);
+						nh.neighborhoodGames(1, 0, 3);
+						nh.neighborhoodRounds(1, 0, 3);
+					}
+				} else { // more local search for random
+					if(i < 2 ) {
+						Neighborhood nh = new Neighborhood(sol);
+						nh.neighborhoodGames(1, 0, 3);
+						nh.neighborhoodRounds(1, 0, 3);
+					}
 				}
-				
+
 				for (int round = 0; round < sol.getRoundsNum(); round++) {
 					for (int city = 0; city < sol.getCitiesNum(); city++) {
 						
@@ -134,9 +169,10 @@ public class ACO {
 				//System.err.println("after:");
 				//proj1.printMatrix(problem.pheromones, new PrintWriter(System.err));
 				//System.exit(0);
-			}
+			} // end for pheromone update
 			
-			if (iteration % 50 == 0) {
+			//if (iteration % 50 == 0) {
+			if (iteration % (int)(iterations/4) == 0) {
 				System.err.print("\n");
 				proj1.printMatrix(problem.pheromones, new PrintWriter(System.err));
 				System.err.print("\n");
@@ -147,29 +183,45 @@ public class ACO {
 				GreedyAnt.dist_weight *= 0.85;
 			}
 			
-			Solution bestSolHere = solutions.get(0);
-			bestSolValues.add(bestSolHere.getCumulativeCost());
 			
-			if (iteration % 10 == 0) {
-				System.err.println("best in iteration "+iteration+": "+bestSolHere.getCumulativeCost());
+			Solution bestSolHere = null;
+			//System.err.println("best invalid: " + solutions.get(0));
+			for (int i=0; i < solutions.size(); i++) {
+				if (do_greedy || solutions.get(i).checkConstraint() == false) {
+					bestSolHere = solutions.get(i);
+					bestSolValues.add(bestSolHere.getCumulativeCost());
+					break;
+				}
 			}
 			
-			if (bestSol == null || bestSolHere.getCumulativeCost() < bestSol.getCumulativeCost()) {
-				bestSol = bestSolHere;
+
+			if (bestSolHere == null) {
+				if (iteration % 10 == 0) {
+					System.err.println("best in iteration: no valid sol"); 
+				}
+			} else {
+				if (iteration % 10 == 0) {
+					System.err.println("best in iteration "+iteration+": "+bestSolHere.getCumulativeCost() + "  checkContraints: " + bestSolHere.checkConstraint());
+				}
+
+				if (bestSol == null || bestSolHere.getCumulativeCost() < bestSol.getCumulativeCost()) {
+					bestSol = bestSolHere;
+				}
 			}
 		}
 		
 		int x = 0;
-		int partSize = bestSolValues.size()/20;
-		for (int i=0; i<bestSolValues.size(); i++) {
-			x += bestSolValues.get(i);
-			
-			if (i % partSize == 0) {
-				System.err.println ( i/partSize + ": " + x/partSize );
-				x = 0;
+		if (bestSolValues.size() > 0) {
+			int partSize = bestSolValues.size()/20;
+			partSize = Math.max(partSize, 1);
+			for (int i=0; i<bestSolValues.size(); i++) {
+				x += bestSolValues.get(i);
+
+				if (i % partSize == 0) {
+					System.err.println ( i/partSize + ": " + x/partSize );
+					x = 0;
+				}
 			}
-			
-			
 		}
 		
 		

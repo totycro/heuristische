@@ -113,8 +113,8 @@ public class proj1 {
 				Util.protocol += "all costs: " +  sol.getCumulativeCost() +"\n";
 			}
 			//
-			NeighborhoodTeams n3 = new NeighborhoodTeams(sol);
-			n3.neighborhoodTeams(neigh);
+			//NeighborhoodTeams n3 = new NeighborhoodTeams(sol);
+			//n3.neighborhoodTeams(neigh);
 			if(Util.protocolBoolean){
 				Util.protocol += "\n2: \n"+sol;
 			}
@@ -158,6 +158,7 @@ public class proj1 {
 		}
 		
 		System.out.println("all costs: " +  sol.getCumulativeCost() );
+		System.out.println("checkConstraints: " +  sol.checkConstraint());
 		
 		try {
 			PrintWriter p = new PrintWriter( new FileWriter("solution.txt") );

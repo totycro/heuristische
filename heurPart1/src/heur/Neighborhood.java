@@ -26,7 +26,7 @@ public class Neighborhood {
 	 */
 	private void randomNeighborhoodRounds(int cntChange, int times){
 		String text = (cntChange+" round exchanges, "+times+" tries");
-		System.out.println(text);
+		//System.out.println(text);
 		if(Util.protocolBoolean){
 			Util.protocol += text+"\n";
 		}
@@ -121,7 +121,7 @@ public class Neighborhood {
 			Collections.reverse(roundListClone);
 		}
 		//
-		//System.out.println(roundListClone.toString());
+		////System.out.println(roundListClone.toString());
 		//
 		ArrayList<Integer> listIdx = new ArrayList<Integer>();
 		for(int j=0; j<roundListClone.size(); j++){
@@ -147,8 +147,8 @@ public class Neighborhood {
 		boolean badConstraint = sol.checkConstraint();
 		//
 		if(orgSolutionFalse && !badConstraint){
-			System.out.println("repair .... NEW SOLUTION (games exchange): "+costs);
-			System.out.println(sol);
+			//System.out.println("repair .... NEW SOLUTION (games exchange): "+costs);
+			//System.out.println(sol);
 			orgSolutionFalse = (sol.checkConstraint());
 			if(Util.protocolBoolean){
 				Util.protocol += "repair .... NEW SOLUTION (games exchange): "+costs+"\n";
@@ -159,7 +159,7 @@ public class Neighborhood {
 			sol.setSolution(oldSolution);
 		}
 		else{
-			System.out.println(change+": "+costs);
+			//System.out.println(change+": "+costs);
 			improvement = true;
 			if(Util.protocolBoolean){
 				Util.protocol += change+": "+costs+"\n";
@@ -382,8 +382,8 @@ public class Neighborhood {
 		change = change+": "+costs;
 		//
 		if(orgSolutionFalse && !badConstraint){
-			System.out.println("repair .... NEW SOLUTION (games exchange): "+costs);
-			System.out.println(sol);
+			//System.out.println("repair .... NEW SOLUTION (games exchange): "+costs);
+			//System.out.println(sol);
 			orgSolutionFalse = (sol.checkConstraint());
 			if(Util.protocolBoolean){
 				Util.protocol += "repair .... NEW SOLUTION (games exchange): "+costs+"\n";
@@ -418,7 +418,7 @@ public class Neighborhood {
 				}
 			}
 			sol.setSolution(solPossible.get(minIdx));
-			System.out.println(solPossibleChoice.get(minIdx));
+			//System.out.println(solPossibleChoice.get(minIdx));
 			if(Util.protocolBoolean){
 				Util.protocol += solPossibleChoice.get(minIdx)+"\n";
 			}
@@ -433,7 +433,7 @@ public class Neighborhood {
 	
 	private void bestNeighborhoodGame(List<ArrayList<Integer>> listOfGames, int cntChange){
 		
-		System.out.println("Change "+cntChange+" games");
+		//System.out.println("Change "+cntChange+" games");
 		
 		boolean improvement = true;
 		while(improvement){
@@ -588,15 +588,15 @@ public class Neighborhood {
 				boolean badConstraint = sol.checkConstraint();
 				//
 				if(orgSolutionFalse && !badConstraint){
-					System.out.println("repair .... NEW SOLUTION (rounds exchange): "+costs);
-					System.out.println(sol);
+					//System.out.println("repair .... NEW SOLUTION (rounds exchange): "+costs);
+					//System.out.println(sol);
 					orgSolutionFalse = (sol.checkConstraint());
 				}
 				else if((costsOrg<=costs) || badConstraint){
 					sol.setSolution(oldSolution);
 				}
 				else{
-					System.out.println("Improvement: round "+sortIdx+" to "+s+" "+costs);
+					//System.out.println("Improvement: round "+sortIdx+" to "+s+" "+costs);
 				}
 			}
 		}
@@ -619,15 +619,15 @@ public class Neighborhood {
 		boolean badConstraint = sol.checkConstraint();
 		//
 		if(orgSolutionFalse && !badConstraint){
-			System.out.println("repair .... NEW SOLUTION (move rounds): "+costs);
-			System.out.println(sol);
+			//System.out.println("repair .... NEW SOLUTION (move rounds): "+costs);
+			//System.out.println(sol);
 			orgSolutionFalse = (sol.checkConstraint());
 		}
 		else if((costsOrg<=costs) || badConstraint){
 			sol.setSolution(oldSolution);
 		}
 		else{
-			System.out.println("Improvement: round move "+roundCnt+": "+costs);
+			//System.out.println("Improvement: round move "+roundCnt+": "+costs);
 		}
 		//
 		roundCnt = roundCnt-1;
@@ -712,8 +712,8 @@ public class Neighborhood {
 		change = change+": "+costs;
 		//
 		if(orgSolutionFalse && !badConstraint){
-			System.out.println("repair .... NEW SOLUTION (round exchange): "+costs);
-			System.out.println(sol);
+			//System.out.println("repair .... NEW SOLUTION (round exchange): "+costs);
+			//System.out.println(sol);
 			orgSolutionFalse = (sol.checkConstraint());
 			if(Util.protocolBoolean){
 				Util.protocol += "repair .... NEW SOLUTION (games exchange): "+costs+"\n";
@@ -724,7 +724,7 @@ public class Neighborhood {
 			sol.setSolution(oldSolution);
 		}
 		else{
-			//System.out.println("possible "+costs);
+			////System.out.println("possible "+costs);
 			solPossible.add(sol.deepCopy());
 			solPossibleChoice.add(change);
 			sol.setSolution(oldSolution);
@@ -733,7 +733,7 @@ public class Neighborhood {
 	
 	private void bestNeighborhoodRounds(int cntChange){
 		
-		System.out.println("Round-Change: "+cntChange);
+		//System.out.println("Round-Change: "+cntChange);
 		boolean improvement = true;
 		int cntRound = sol.getRoundsNum();
 		
@@ -844,8 +844,8 @@ public class Neighborhood {
 		boolean badConstraint = sol.checkConstraint();
 		//
 		if(orgSolutionFalse && !badConstraint){
-			System.out.println("repair .... NEW SOLUTION (round exchange): "+costs);
-			System.out.println(sol);
+			//System.out.println("repair .... NEW SOLUTION (round exchange): "+costs);
+			//System.out.println(sol);
 			orgSolutionFalse = (sol.checkConstraint());
 			if(Util.protocolBoolean){
 				Util.protocol += "repair .... NEW SOLUTION (games exchange): "+costs+"\n";
@@ -856,7 +856,7 @@ public class Neighborhood {
 			sol.setSolution(oldSolution);
 		}
 		else{
-			System.out.println("Improvement "+change+": "+costs);
+			//System.out.println("Improvement "+change+": "+costs);
 			improvement = true;
 			if(Util.protocolBoolean){
 				Util.protocol += "Improvement "+change+": "+costs+"\n";
@@ -906,8 +906,8 @@ public class Neighborhood {
 					}
 				}
 				else{
-					System.out.println("Improvement "+ch+" - "+ch2+": "+costs);
-					System.out.println(sol);
+					//System.out.println("Improvement "+ch+" - "+ch2+": "+costs);
+					//System.out.println(sol);
 					if(Util.protocolBoolean){
 						Util.protocol += "Improvement "+ch+" - "+ch2+": "+costs+"\n";
 					}
@@ -957,8 +957,8 @@ public class Neighborhood {
 					}
 				}
 				else{
-					System.out.println("Improvement "+ch+" - "+ch2+" - "+ch3+": "+costs);
-					System.out.println(sol);
+					//System.out.println("Improvement "+ch+" - "+ch2+" - "+ch3+": "+costs);
+					//System.out.println(sol);
 					if(Util.protocolBoolean){
 						Util.protocol += "Improvement "+ch+" - "+ch2+" - "+ch3+": "+costs+"\n";
 					}
@@ -981,8 +981,8 @@ public class Neighborhood {
 		}
 		double var = Math.sqrt( std/(al.size()-1) );
 		//
-		System.out.println(average);
-		System.out.println(var);
+		//System.out.println(average);
+		//System.out.println(var);
 	}
 	
 	public void neighborhoodRoundsTests(int neighChoice){	
@@ -993,7 +993,7 @@ public class Neighborhood {
 			int neigh = sol.getRoundsNum();
 			int times = 100;
 			//for(int i=2; i<neigh; i++){
-				//System.out.println(i);
+				////System.out.println(i);
 			ArrayList<Integer> al = new ArrayList<Integer>();
 			for(int i=0; i<100; i++){
 				List<List<Game>> oldSolution = sol.deepCopy();
@@ -1003,7 +1003,7 @@ public class Neighborhood {
 			}
 			getStatistic(al);
 			//}
-			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost());
+			//System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost());
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+"\n";
 			}
@@ -1012,7 +1012,7 @@ public class Neighborhood {
 			for(int i=0; i<sol.getRoundsNum(); i++){
 				listNeighborhoodRound(i,minNotMax);
 			}
-			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+", Iterationsteps: "+iterationStep);
+			//System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+", Iterationsteps: "+iterationStep);
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+", Iterationsteps: "+iterationStep+"\n";
 			}
@@ -1023,7 +1023,7 @@ public class Neighborhood {
 			for(int i=0; i<cntChanges; i++){
 				bestNeighborhoodRounds(i);
 			}
-			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+", Iterationsteps: "+iterationStep);
+			//System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+", Iterationsteps: "+iterationStep);
 			
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+", Iterationsteps: "+iterationStep+"\n";
@@ -1074,7 +1074,7 @@ public class Neighborhood {
 			}
 			getStatistic(al);
 			
-			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep);
+			//System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep);
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep+"\n";
 			}
@@ -1085,10 +1085,10 @@ public class Neighborhood {
 			List<ArrayList<Integer>> listOfGamesCnt = sol.getGameListCosts();
 			for(int i=0; i<5; i++){
 				listNeighborhoodGame(listOfGamesCnt,minNotMax,i);
-				System.out.println("... Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep);
+				//System.out.println("... Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep);
 				sol.setSolution(oldSolution);
 			}
-			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep);
+			//System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep);
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+", Iterations: "+iterationStep+"\n";
 			}
@@ -1099,10 +1099,10 @@ public class Neighborhood {
 			List<List<Game>> oldSolution = sol.deepCopy();
 			for(int i=0; i<5; i++){
 				bestNeighborhoodGame(listOfGames,i);
-				System.out.println(".... Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterations: "+iterationStep);
+				//System.out.println(".... Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterations: "+iterationStep);
 				sol.setSolution(oldSolution);
 			}
-			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterations: "+iterationStep);
+			//System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterations: "+iterationStep);
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterations: "+iterationStep+"\n";
 			}
@@ -1127,7 +1127,7 @@ public class Neighborhood {
 			for(int neighCnt=from; neighCnt<to; neighCnt++){
 				randomNeighborhoodRounds(neighCnt, times);
 			}
-			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+times);
+			//System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+times);
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+times+"\n";
 			}
@@ -1137,7 +1137,7 @@ public class Neighborhood {
 			for(int neighCnt=from; neighCnt<to; neighCnt++){
 				listNeighborhoodRound(neighCnt,minNotMax);
 			}
-			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
+			//System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep+"\n";
 			}
@@ -1146,7 +1146,7 @@ public class Neighborhood {
 			for(int neighCnt=from; neighCnt<to; neighCnt++){
 				bestNeighborhoodRounds(neighCnt);
 			}
-			System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
+			//System.out.println("Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (rounds) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep+"\n";
 			}
@@ -1167,7 +1167,7 @@ public class Neighborhood {
 			for(int neighCnt=from; neighCnt<to; neighCnt++){
 					listNeighborhoodGameRandom(listOfGames, listOfGames.size(), neighCnt, times);
 			}
-			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+times);
+			//System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+times);
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+times+"\n";
 			}
@@ -1178,7 +1178,7 @@ public class Neighborhood {
 			for(int neighCnt=from; neighCnt<to; neighCnt++){
 				listNeighborhoodGame(listOfGamesCnt,minNotMax,neighCnt);
 			}
-			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
+			//System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep+"\n";
 			}
@@ -1187,7 +1187,7 @@ public class Neighborhood {
 			for(int neighCnt=from; neighCnt<to; neighCnt++){
 				bestNeighborhoodGame(listOfGames,neighCnt);
 			}
-			System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
+			//System.out.println("Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep);
 			if(Util.protocolBoolean){
 				Util.protocol += "Neighborhood (games) "+neighChoice+": "+sol.getCumulativeCost()+" (costs), Iterationsteps: "+iterationStep+"\n";
 			}

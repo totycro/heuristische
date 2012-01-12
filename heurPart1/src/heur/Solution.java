@@ -83,8 +83,8 @@ public class Solution {
 	private List<List<Game>> solution;
 	private int n;
 	private Problem problem;
-	int consecHome;
-	int conseqRoad;
+	public int consecHome;
+	public int conseqRoad;
 	
 	public Solution(int n, Problem problem) {
 		this.n = n;
@@ -422,8 +422,23 @@ public class Solution {
 		return neigh;
 	}
 	//
+	public int getPunishment(){
+		/*
+		if (checkConstraint() == false) {
+			return 0;
+		}
+		*/
+		int viol = getNumConstraintViolations();
+		return viol * 1000;
+	}
 	public boolean checkConstraint(){
-		//
+		return getNumConstraintViolations() != 0;
+	}
+	public int getNumConstraintViolations() {
+		return getNumConstraintViolations(false);
+	}
+	public int getNumConstraintViolations(boolean onlyBool){
+		int num = 0;
 		for (int round = 0; round < getRoundsNum(); round++) {
 			for (int city = 0; city < getCitiesNum(); city++) {
 				//
@@ -432,38 +447,43 @@ public class Solution {
 				if((!game.playAtA) && (city==game.a)){
 					boolean canPlayAbroad = canPlayAt(city, round, false, consecHome, conseqRoad);
 					if(!canPlayAbroad){
-						return true;
+						if (onlyBool) { return 1; }
+						num++;
 					}
 				}
 				if((game.playAtA) && (city==game.b)){
 					boolean canPlayAbroad = canPlayAt(city, round, false, consecHome, conseqRoad);
 					if(!canPlayAbroad){
-						return true;
+						if (onlyBool) { return 1; }
+						num++;
 					}
 				}
 				if((game.playAtA) && (city==game.a)){
 					boolean canPlayHome = canPlayAt(city, round, true, consecHome, conseqRoad);
 					if(!canPlayHome){
-						return true;
+						if (onlyBool) { return 1; }
+						num++;
 					}
 				}
 				if((!game.playAtA) && (city==game.b)){
 					boolean canPlayHome = canPlayAt(city, round, true, consecHome, conseqRoad);
 					if(!canPlayHome){
-						return true;
+						if (onlyBool) { return 1; }
+						num++;
 					}
 				}
 				//
 				if(Util.CHECK_REPEATERS && (round!=0)){
 					Game otherGame = getGameOfCityInRound(city, round-1);
 					if( (game.a==otherGame.a && game.b==otherGame.b) || (game.b==otherGame.a && game.a==otherGame.b)){
-						return true;
+						if (onlyBool) { return 1; }
+						num++;
 					}
 				}
 				
 			}
 		}
-		return false;
+		return num;
 	}
 	//
 	public List<ArrayList<Integer>> getGameList(){

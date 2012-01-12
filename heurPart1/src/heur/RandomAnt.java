@@ -15,21 +15,21 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GreedyAnt implements Ant {
+public class RandomAnt implements Ant {
 	
 	public static double dist_weight = 1.0;
 	public static double pheromone_weight = 1.0;
 	
 	public static boolean some_flag = false;
 	
-	private final static Logger log = Logger.getLogger(GreedyAnt.class.getName());
+	private final static Logger log = Logger.getLogger(RandomAnt.class.getName());
 	static  {
 		Util.setupLogger(log, /*on=*/false);
 	}
 	
 	private Problem problem;
 
-	public GreedyAnt(Problem problem) {
+	public RandomAnt(Problem problem) {
 		//this(problem, false);
 		this.problem = problem;
 	}
@@ -42,15 +42,13 @@ public class GreedyAnt implements Ant {
 	}
 	*/
 	
-	/* (non-Javadoc)
-	 * @see heur.Ant#execute()
+	/**
+	 * Executes the greedy construction heuristic.
+	 * @return a solution
 	 */
 	public Solution execute() {
 		return execute(0);
 	}
-	/* (non-Javadoc)
-	 * @see heur.Ant#execute(long)
-	 */
 	public Solution execute(long seed) {
 		Random rand = new Random(seed);
 		// rng for rng seeds
@@ -87,7 +85,17 @@ public class GreedyAnt implements Ant {
 			final HashMap<Integer, List<Solution.Game> > possibleGames = new HashMap<Integer, List<Solution.Game> >();
 			
 			for (int i=0; i<solution.getCitiesNum(); ++i) {
-				List<Solution.Game> games = solution.getPossibleGames(i, round, problem.consecHome, problem.consecRoad);
+				//List<Solution.Game> games = solution.getPossibleGames(i, round, problem.consecHome, problem.consecRoad);
+				boolean old_check_rep = Util.CHECK_REPEATERS;
+				Util.CHECK_REPEATERS = false;
+				List<Solution.Game> games = solution.getPossibleGames(i, round, 100, 100);
+				Util.CHECK_REPEATERS = old_check_rep;
+				/*
+				List<Solution.Game> games = new ArrayList<Solution.Game>();
+				for (int j=0; j<solution.getCitiesNum(); ++j) {
+					games.add( new Solution.Game(i, j, true) );
+				}
+				*/
 				possibleGames.put(i, games);
 			}
 			
@@ -143,6 +151,7 @@ public class GreedyAnt implements Ant {
 				
 				// dist_quot = dist_to_city / max_dist_of_possible_games
 				{
+					/*
 					int max_dist = 0;
 					Map<Solution.Game, Integer> distances = new HashMap<Solution.Game, Integer>(); 
 					for (Solution.Game game : games) {
@@ -168,6 +177,7 @@ public class GreedyAnt implements Ant {
 					for (Map.Entry<Solution.Game, Integer> entry : distances.entrySet()) {
 						dist_quotient.put(entry.getKey(), new Double(entry.getValue()) / max_dist);
 					}
+					*/
 				}
 				
 				// pheromone_quot: just take value from table
@@ -205,7 +215,7 @@ public class GreedyAnt implements Ant {
 				
 					
 					double rating =
-							(dist_quotient.get(game) * dist_weight) +
+							//(dist_quotient.get(game) * dist_weight) +
 							(pheromone_quotient.get(game) * pheromone_weight);
 						
 					if (decisionDebug) {
