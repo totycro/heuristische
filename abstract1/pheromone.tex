@@ -1,0 +1,26 @@
+\section{Pheromone model}
+
+For the TTP, there are several reasonable ways in which pheromones can be distributed to attributes of solutions. We identified several basic alternatives:
+
+\begin{description}
+	\item[$n\times n$-edge-matrix.] 
+		The entries $(i,j)$ of this matrix would encode the desirability for a game against $j$ after $i$. This is however very limited, i.e. it does not include information about the location of the game, which is most crucial for the value of objective function.
+	\item[$2n\times 2n$-edge-matrix.] 
+		This can be interpreted as an extension of the first variant, which distinguishes between home- and away-games, i.e. the range $[n+1, 2n]$ represents games against this city abroad. 
+		Here, the problem still occurs that an away-game after a home-game can mean very different travelling costs depending on the location of the city with respect to the particular opponent.
+		
+	\item[Edge-matrix per city.]
+		To account for the different locations of the cities, one could consider the travelling order for every city as a distinct problem, therefore keeping a pheromone matrix for every city.
+		The information can be expected to be more precise with at the expense of far higher construction costs.
+		This approach can be combined with either one of the first two approaches.
+
+	\item[Position-matrix.]
+		Instead of saving the edges, one could also save the absolute position of cities in the solution. Since the costs of a solution are composed of the single moves from one location to the next one, this alternative is not advisable. 
+\end{description}
+
+In our implementation, we decided to use one $2n\times 2n$-edge-matrix in order to profit from synergies of applying the results of the tours for each city to one piece of data.
+The idea is that if many cities e.g. play an away-game against $b$ after they played against $a$, the edge between those two is very likely to be a good solution attribute, and should therefore be used by as many cities as possible. 
+This would not be possible in the same way if a matrix per city was used.
+
+	
+
