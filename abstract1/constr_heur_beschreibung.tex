@@ -1,0 +1,29 @@
+\section{Construction heuristics}
+
+We implemented two different construction heuristics:
+
+\subsection{Greedy ants}
+This heuristic is based on the greedy algorithm we implemented in exercise 1: For every round, a city is chosen for game selection.
+Cities with few possible games are preferred.
+For the chosen city, all possible games are evaluated according to this objective function:
+$$ p_{ij} = \alpha * \eta_{ij} + \tau_{ij}  $$
+Among these, the minimum is selected.
+
+The local information $\eta_{ij}$ (distance from the current location to all other cities) is scaled into the range of $[0,1]$ by dividing by the maximum distance in order to be able to make it compatible with the pheromone values.
+The factor $\alpha$ is used to reduce the influence of local information on the decision over time.
+
+The pheromone values $\tau_{ij}$ are initialized by 1.0.
+
+TODO: info wieviele ants setzen dürfen und wie pheromone jetzt genau gesetzt werden
+
+\subsection{Randomized ants}
+
+This construction approach is more dynamic and also general than the first one.
+Instead of leveraging local information, the decisions are solely based upon the distribution of pheromones. 
+The algorithm can therefore select solution attributes, that seem to be bad locally and those will be rewarded, if it leads to a good overall solution, which is not possible with greedy.
+
+Since the search is purely random at the beginning, it takes far more iterations/ants than the greedy approach to find reasonable solutions, but this can be attributed to the fact that a far greater portion of the search space is considered. 
+
+In order to maximize the number of solutions that can be found, we also allow invalid solutions with respect to the repeaters- and number of home- and away-games-constraint in this approach.
+Those are punished by a fixed fine per violation so that nearly valid solutions are competitive against bad valid solutions, and solutions with an unreasonable number of violations are discarded.
+
