@@ -1,16 +1,18 @@
 \section{Results}
 
 We used 500 iterations for every result and averaged them over 20 instances. The
-standard deviation (std) is to the left of the average cost result. We tried
-different numbers of ants and our best results were mostly found with 150 ants.
+standard deviation (std) is to the left of the average cost result. The lower
+bounds (l.b.) are written in the header. We tried different numbers of ants and
+150 ants are able to find good results. One can take more ants, but the results
+stay in the range between 150 and 200 ants.
 
 Ants without neighborhood search, Randomized ants:
 \newline
 \begin{minipage}[b]{1.0\textwidth}
     \begin{tabular}{ l | ll | ll | ll | ll | ll}
 	\hline
-	& \multicolumn{2}{c}{NL4, f.sol. 8276} & \multicolumn{2}{c}{NL6, f.sol. 23978}
-	& \multicolumn{2}{c}{NL8, f.sol. 41505} & \multicolumn{2}{c}{NL10, f.sol. 68691} \\
+	& \multicolumn{2}{c}{NL4, l.b. 8276} & \multicolumn{2}{c}{NL6, l.b. 22969}
+	& \multicolumn{2}{c}{NL8, l.b. 38760} & \multicolumn{2}{c}{NL10, l.b. 56506} \\
 	\cline{1-9}
 	Ants & Costs & std & Costs & std & Costs & std & Costs & std \\
 	\hline
@@ -30,8 +32,8 @@ Ants without neighborhood search, Greedy ants:
 \begin{minipage}[b]{1.0\textwidth}
     \begin{tabular}{ l | ll | ll | ll | ll | ll}
 	\hline
-	& \multicolumn{2}{c}{NL4, f.sol. 8276} & \multicolumn{2}{c}{NL6, f.sol. 23978}
-	& \multicolumn{2}{c}{NL8, f.sol. 41505} & \multicolumn{2}{c}{NL10, f.sol. 68691} \\
+	& \multicolumn{2}{c}{NL4, l.b. 8276} & \multicolumn{2}{c}{NL6, l.b. 22969}
+	& \multicolumn{2}{c}{NL8, l.b. 38760} & \multicolumn{2}{c}{NL10, l.b. 56506} \\
 	\cline{1-9}
 	Ants & Costs & std & Costs & std & Costs & std & Costs & std \\
 	\hline
@@ -46,17 +48,21 @@ Ants without neighborhood search, Greedy ants:
 	\end{tabular}
 \end{minipage}
 \newline
+As one can see, the standard deviation in our Randomized ants are higher than in
+our Greedy ants.
+\newline
 Of course, we improved the results through local neighborhood search
 (change home/away pattern, rounds and teams). For the N4 test instance the best
 solution was always found and the average value of NL6 is close to the optimal solution. The greedy ants with local neighborhood search are able to find solutions for N8 and N10 not far from the optimum.
+The local search improves the Randomized ants pretty good.
 \newline
 Ants with neighborhood search, Randomized ants:
 \newline
 \begin{minipage}[b]{1.0\textwidth}
     \begin{tabular}{ l | ll | ll | ll | ll | ll}
 	\hline
-	& \multicolumn{2}{c}{NL4, f.sol. 8276} & \multicolumn{2}{c}{NL6, f.sol. 23978}
-	& \multicolumn{2}{c}{NL8, f.sol. 41505} & \multicolumn{2}{c}{NL10, f.sol. 68691} \\
+	& \multicolumn{2}{c}{NL4, l.b. 8276} & \multicolumn{2}{c}{NL6, l.b. 22969}
+	& \multicolumn{2}{c}{NL8, l.b. 38760} & \multicolumn{2}{c}{NL10, l.b. 56506} \\
 	\cline{1-9}
 	Ants & Costs & std & Costs & std & Costs & std & Costs & std \\
 	\hline
@@ -76,8 +82,8 @@ Ants with neighborhood search, Greedy ants:
 \begin{minipage}[b]{1.0\textwidth}
     \begin{tabular}{ l | ll | ll | ll | ll | ll}
 	\hline
-	& \multicolumn{2}{c}{NL4, f.sol. 8276} & \multicolumn{2}{c}{NL6, f.sol. 23978}
-	& \multicolumn{2}{c}{NL8, f.sol. 41505} & \multicolumn{2}{c}{NL10, f.sol. 68691} \\
+	& \multicolumn{2}{c}{NL4, l.b. 8276} & \multicolumn{2}{c}{NL6, l.b. 22969}
+	& \multicolumn{2}{c}{NL8, l.b. 38760} & \multicolumn{2}{c}{NL10, l.b. 56506} \\
 	\cline{1-9}
 	Ants & Costs & std & Costs & std & Costs & std & Costs & std \\
 	\hline
