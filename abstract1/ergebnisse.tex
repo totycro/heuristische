@@ -1,0 +1,95 @@
+\section{Results}
+
+We used 500 iterations for every result and averaged them over 20 instances. The
+Standard deviation (std) is to the left of the average cost result. We tried
+different numbers of ant and our best results were found with 150 ants.
+
+Our Greedy ants showed a better average solution.
+
+Ant without neighborhood - Randomized ants:
+\newline
+\begin{minipage}[b]{1.0\textwidth}
+    \begin{tabular}{ l | ll | ll | ll | ll | ll}
+	\hline
+	& \multicolumn{2}{c}{NL4, f.sol. 8276} & \multicolumn{2}{c}{NL6, f.sol. 23978}
+	& \multicolumn{2}{c}{NL8, f.sol. 41505} & \multicolumn{2}{c}{NL10, f.sol. 68691} \\
+	\cline{1-5}
+	Ants & Costs & std & Costs & std & Costs & std & Costs & std \\
+	\hline
+	5     &  9072,25    & 571,23 &  29946,25    & 1923,33 &  52185,25   & 838,44 &  87186    & 1681 \\
+	10    &  8729,25    & 367,05 &  27808,25    & 1451,74 &  50699,25   & 2594,40 &  86855,5    & 1350,5 \\
+	20    &  8615,75    & 166,71 &  26901,75    & 380,58 &  49447,5    & 2849,26 &  87014,5    & 1416,5 \\
+	50    &  8423,25    & 166,71 &  27025,25    & 620,41 &  46639,25   & 1205,16 &  87391,33    & 629,62 \\
+	100   &  8519,5    & 192,50 &  27119,25    & 434,28 &  49371      & 1213,42 &  86610,66    & 1409,48 \\
+	150   &  8519,5    & 192,50 &  26881,75    & 237,91 &  47826,5    & 848,79 &  84314,33    & 822,63 \\
+	200   &  8423,25    & 166,71 &  26430,75    & 304,02 &  47860,25   & 1297,65 &  83207,66    & 940,41 \\
+	\hline
+	\end{tabular}
+\end{minipage}
+\newline
+Ant without neighborhood - Greedy ants:
+\newline
+\begin{minipage}[b]{1.0\textwidth}
+    \begin{tabular}{ l | ll | ll | ll | ll | ll}
+	\hline
+	& \multicolumn{2}{c}{NL4, f.sol. 8276} & \multicolumn{2}{c}{NL6, f.sol. 23978}
+	& \multicolumn{2}{c}{NL8, f.sol. 41505} & \multicolumn{2}{c}{NL10, f.sol. 68691} \\
+	\cline{1-5}
+	Ants & Costs & std & Costs & std & Costs & std & Costs & std \\
+	\hline
+	5   &  8313,75  & 57,59 &  25188    & 444,85 &  43196,75  & 219,99 &  69703,5  & 597,5 \\
+	10  &  8286,5   & 6,06 &  25005,25  & 211,15 &  42589     & 406,07 &  69119,5  & 180,5 \\
+	25  &  8283    & 7,00 &  24885,25   & 243,22 &  42580,75  & 103,60 &  67693 	& 227 \\
+	50  &  8279,5  & 6,06 &  25139    & 358,60 &  42149,75   & 169,99 &  67744,5    & 118,5 \\
+	100 &  8276    & 0 &  24946,25    & 308,61 &  41550,5    & 422,48 &  66908    & 121 \\
+	150 &  8276    & 0 &  24923,00    & 190,16 &  41408      & 183,77 &  67409    &
+	191 \\ 200 &  8276    & 0 &  24801,25    & 448,83 &  41670,75   & 258,09 &  68237    & 216 \\
+	\hline
+	\end{tabular}
+\end{minipage}
+\newline
+Of course, we improved the results through local neighborhood search. For the N4
+test instance the best solution were always found.
+\newline
+Ant with neighborhood, Randomized ants:
+\newline
+\begin{minipage}[b]{1.0\textwidth}
+    \begin{tabular}{ l | ll | ll | ll | ll | ll}
+	\hline
+	& \multicolumn{2}{c}{NL4, f.sol. 8276} & \multicolumn{2}{c}{NL6, f.sol. 23978}
+	& \multicolumn{2}{c}{NL8, f.sol. 41505} & \multicolumn{2}{c}{NL10, f.sol. 68691} \\
+	\cline{1-5}
+	Ants & Costs & std & Costs & std & Costs & std & Costs & std \\
+	\hline
+	5     &  8276    & 0 &  24684    & 356,80 &  43230,5    & 556,47 &  c    & d \\
+	10    &  8276    & 0 &  24293,75 & 299,50 &  42814,75    & 650,81 &  c    & d \\
+	25    &  8276    & 0 &  24277,25 & 208,51 &  42458,25    & 1264,38 &  c    & d \\
+	50    &  8276    & 0 &  24367,75 & 311,85 &  42327    & 1194,70 &  c    & d \\
+	100   &  8276    & 0 &  24144,5  & 97,62  &  42074,5    & 925,54 &  c    & d \\
+	150   &  8276    & 0 &  24143,25 & 114,85 &  41540    & 495,37 &  c   & d \\
+	200   &  8276    & 0 &  24155,5  & 109,18 &  41662,25    & 731,21 &  c    & d \\
+	\hline
+	\end{tabular}
+\end{minipage}
+\newline
+Ant with neighborhood Greedy ants:
+\newline
+\begin{minipage}[b]{1.0\textwidth}
+    \begin{tabular}{ l | ll | ll | ll | ll | ll}
+	\hline
+	& \multicolumn{2}{c}{NL4, f.sol. 8276} & \multicolumn{2}{c}{NL6, f.sol. 23978}
+	& \multicolumn{2}{c}{NL8, f.sol. 41505} & \multicolumn{2}{c}{NL10, f.sol. 68691} \\
+	\cline{1-5}
+	Ants & Costs & std & Costs & std & Costs & std & Costs & std \\
+	\hline
+	5     &  8276  & 0 &    24098   & 24,01  &  41322,25    & 281,03 &  c    & d \\
+	10    &  8276  & 0 &    24239   & 177,89 &  41168       & 301,72 &  c    & d \\
+	25    &  8276  & 0 &    24333   & 266,25 &  41065,75    & 150,27 &  c    & d \\
+	50    &  8276  & 0 &    24240   & 165,21 &  40960,25    & 112,26 &  c    & d \\
+	100   &  8276  & 0 &    24283   & 360,27 &  41042,25    & 196,05 &  c    & d \\
+	150   &  8276  & 0 &  24155,5   & 109,18 &  40991,75    & 80,49  &  c    & d \\
+	200   &  8276  & 0 &  24443,25  & 266,35 &  40995,25    & 121,18 &  c    & d
+	\\
+	\hline
+	\end{tabular}
+\end{minipage}
